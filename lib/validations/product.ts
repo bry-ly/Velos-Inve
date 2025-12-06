@@ -26,6 +26,89 @@ const numericField = z.preprocess((val) => {
 }, z.number().optional());
 
 /**
+ * Client-side schema for react-hook-form
+ */
+export const ProductFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Product name is required")
+    .max(200, "Product name must be 200 characters or fewer"),
+
+  sku: z.string().max(100, "SKU must be 100 characters or fewer").optional(),
+
+  categoryId: z.string().optional(),
+
+  manufacturer: z
+    .string()
+    .min(1, "Manufacturer is required")
+    .max(100, "Manufacturer must be 100 characters or fewer"),
+
+  model: z
+    .string()
+    .max(100, "Model must be 100 characters or fewer")
+    .optional(),
+
+  condition: z.enum(["new", "used", "refurbished", "for-parts"]),
+
+  price: z.number().nonnegative("Price must be 0 or greater"),
+
+  quantity: z.number().int().nonnegative("Quantity must be 0 or greater"),
+
+  lowStockAt: z
+    .number()
+    .int()
+    .nonnegative("Low stock threshold must be 0 or greater")
+    .optional(),
+
+  supplier: z
+    .string()
+    .max(100, "Supplier must be 100 characters or fewer")
+    .optional(),
+
+  imageUrl: z
+    .string()
+    .refine(
+      (value) => {
+        if (!value) return true;
+        return (
+          z.string().url().safeParse(value).success ||
+          value.startsWith("data:image/")
+        );
+      },
+      { message: "Image URL must be a valid URL or base64 data URL" }
+    )
+    .optional(),
+
+  warrantyMonths: z
+    .number()
+    .int()
+    .nonnegative("Warranty months must be 0 or greater")
+    .optional(),
+
+  location: z
+    .string()
+    .max(200, "Location must be 200 characters or fewer")
+    .optional(),
+
+  specs: z
+    .string()
+    .max(2000, "Specs must be 2000 characters or fewer")
+    .optional(),
+
+  compatibility: z
+    .string()
+    .max(1000, "Compatibility must be 1000 characters or fewer")
+    .optional(),
+
+  notes: z
+    .string()
+    .max(2000, "Notes must be 2000 characters or fewer")
+    .optional(),
+
+  tagIds: z.array(z.string()).optional(),
+});
+
+/**
  * Main product schema with preprocessors for FormData handling
  */
 export const ProductSchema = z.object({
@@ -60,9 +143,7 @@ export const ProductSchema = z.object({
     "Model must be 100 characters or fewer"
   ),
 
-  condition: z
-    .enum(["new", "used", "refurbished", "for-parts"])
-    .default("new"),
+  condition: z.enum(["new", "used", "refurbished", "for-parts"]).default("new"),
 
   price: z.coerce
     .number()
@@ -148,3 +229,6 @@ export const ProductSchema = z.object({
 });
 
 export type ProductInput = z.infer<typeof ProductSchema>;
+
+// Client-side form type - inferred from form schema
+export type ProductFormData = z.infer<typeof ProductFormSchema>;
