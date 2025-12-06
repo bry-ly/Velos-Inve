@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/layout/site-header";
-import { AddProductForm } from "@/components/product/add-product-form";
+import { ProductForm } from "@/components/product/product-form";
 import { prisma } from "@/lib/prisma/prisma";
 import { AddCategoryButton } from "@/components/inventory/add-category-button";
 
@@ -61,7 +61,7 @@ export default async function AddProductPage() {
         <SiteHeader action={<AddCategoryButton />} />
         <main className="p-8">
           <div className="max-w-4xl justify-center mx-auto">
-            <AddProductForm categories={categoryOptions} tags={tagOptions}/>
+            <ProductForm categories={categoryOptions} tags={tagOptions} submitLabel="Add product to inventory" showResetButton={true} />
           </div>
         </main>
       </SidebarInset>

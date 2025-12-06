@@ -61,11 +61,9 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Drawer,
   DrawerContent,
@@ -75,7 +73,6 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import Image from "next/image";
 import {
@@ -88,7 +85,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { updateProduct, deleteProduct } from "@/lib/action/product";
+import { deleteProduct } from "@/lib/action/product";
+import { ProductForm } from "@/components/product/product-form";
 import {
   CONDITIONS,
   CONDITION_BADGES,
@@ -97,6 +95,7 @@ import {
   getStockStatus,
 } from "@/lib/constants/inventory";
 import type { Product, CategoryOption, InitialFilters } from "@/lib/types";
+import type { Condition } from "@/lib/constants/inventory";
 import { ProductNameCell } from "./columns/cells/product-name-cell";
 import { QuantityCell } from "./columns/cells/quantity-cell";
 import { ActionsCell } from "./columns/cells/actions-cell";
@@ -172,16 +171,12 @@ export function InventoryDataTable({
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
   const [bulkDeleteOpen, setBulkDeleteOpen] = React.useState(false);
   const [isBulkDeleting, startBulkDeleteTransition] = React.useTransition();
-  const [stockStatusFilter, setStockStatusFilter] = React.useState<string>(
-    "all"
-  );
+  const [stockStatusFilter, setStockStatusFilter] =
+    React.useState<string>("all");
   // Edit dialog state
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [editProduct, setEditProduct] = React.useState<Product | null>(null);
-  const [editForm, setEditForm] = React.useState<
-    Record<string, string | string[]>
-  >({});
-  const [isSubmitting, startEditTransition] = React.useTransition();
+
   // Save column visibility to localStorage
   React.useEffect(() => {
     if (typeof window !== "undefined") {
@@ -193,59 +188,19 @@ export function InventoryDataTable({
   }, [columnVisibility]);
   const handleEditClick = React.useCallback((product: Product) => {
     setEditProduct(product);
-    setEditForm({
-      name: product.name ?? "",
-      sku: product.sku ?? "",
-      categoryId: product.categoryId ?? "",
-      manufacturer: product.manufacturer ?? "",
-      model: product.model ?? "",
-      quantity: String(product.quantity ?? 0),
-      lowStockAt: product.lowStockAt != null ? String(product.lowStockAt) : "",
-      condition: product.condition ?? "new",
-      location: product.location ?? "",
-      price: String(product.price ?? 0),
-      warrantyMonths:
-        product.warrantyMonths != null ? String(product.warrantyMonths) : "",
-      notes: product.notes ?? "",
-      compatibility: product.compatibility ?? "",
-      supplier: product.supplier ?? "",
-      specs: product.specs ?? "",
-      imageUrl: product.imageUrl ?? "",
-      tagIds: product.tags?.map((t) => t.id) ?? [],
-    });
     setIsEditOpen(true);
   }, []);
+
   const handleViewDetails = React.useCallback((product: Product) => {
     setDetailsProduct(product);
     setDetailsOpen(true);
   }, []);
-  const handleEditSubmit = React.useCallback(async () => {
-    if (!editProduct) return;
-    startEditTransition(async () => {
-      const formData = new FormData();
-      formData.append("id", editProduct.id);
-      Object.entries(editForm).forEach(([key, value]) => {
-        if (key === "tagIds" && Array.isArray(value)) {
-          value.forEach((tagId) => formData.append("tagIds", tagId));
-        } else if (value !== "" && value != null) {
-          formData.append(key, String(value));
-        }
-      });
-      try {
-        const result = await updateProduct(formData);
-        if (result?.success) {
-          toast.success(result.message ?? "Product updated successfully");
-          setIsEditOpen(false);
-          setEditProduct(null);
-          router.refresh();
-        } else {
-          toast.error(result?.message ?? "Failed to update product");
-        }
-      } catch {
-        toast.error("An unexpected error occurred");
-      }
-    });
-  }, [editProduct, editForm, router]);
+
+  const handleEditSuccess = React.useCallback(() => {
+    setIsEditOpen(false);
+    setEditProduct(null);
+    router.refresh();
+  }, [router]);
 
   // Define table columns
   const columns = React.useMemo<ColumnDef<Product>[]>(
@@ -774,268 +729,36 @@ export function InventoryDataTable({
           <DialogHeader>
             <DialogTitle>Edit Product: {editProduct?.name}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-6">
-            {/* Product Details Section */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-sm">Product Details</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Product Name</Label>
-                  <Input
-                    value={editForm.name || ""}
-                    onChange={(e) =>
-                      setEditForm((prev) => ({ ...prev, name: e.target.value }))
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>SKU</Label>
-                  <Input
-                    value={editForm.sku || ""}
-                    onChange={(e) =>
-                      setEditForm((prev) => ({ ...prev, sku: e.target.value }))
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Category</Label>
-                  <select
-                    value={editForm.categoryId || ""}
-                    onChange={(e) =>
-                      setEditForm((prev) => ({
-                        ...prev,
-                        categoryId: e.target.value,
-                      }))
-                    }
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    <option value="">Select category</option>
-                    {categories.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Manufacturer</Label>
-                  <Input
-                    value={editForm.manufacturer || ""}
-                    onChange={(e) =>
-                      setEditForm((prev) => ({
-                        ...prev,
-                        manufacturer: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Model</Label>
-                  <Input
-                    value={editForm.model || ""}
-                    onChange={(e) =>
-                      setEditForm((prev) => ({
-                        ...prev,
-                        model: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Condition</Label>
-                  <select
-                    value={editForm.condition || "new"}
-                    onChange={(e) =>
-                      setEditForm((prev) => ({
-                        ...prev,
-                        condition: e.target.value,
-                      }))
-                    }
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                  >
-                    {CONDITIONS.map((cond) => (
-                      <option key={cond} value={cond}>
-                        {cond.charAt(0).toUpperCase() + cond.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-            {/* Inventory & Pricing Section */}
-            <Separator />
-            <div className="space-y-4">
-              <h3 className="font-semibold text-sm">Inventory & Pricing</h3>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label>Quantity</Label>
-                  <Input
-                    type="number"
-                    value={editForm.quantity || ""}
-                    onChange={(e) =>
-                      setEditForm((prev) => ({
-                        ...prev,
-                        quantity: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Low Stock Threshold</Label>
-                  <Input
-                    type="number"
-                    value={editForm.lowStockAt || ""}
-                    onChange={(e) =>
-                      setEditForm((prev) => ({
-                        ...prev,
-                        lowStockAt: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Price</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={editForm.price || ""}
-                    onChange={(e) =>
-                      setEditForm((prev) => ({
-                        ...prev,
-                        price: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-            {/* Additional Details Section */}
-            <Separator />
-            <div className="space-y-4">
-              <h3 className="font-semibold text-sm">Additional Details</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Location</Label>
-                  <Input
-                    value={editForm.location || ""}
-                    onChange={(e) =>
-                      setEditForm((prev) => ({
-                        ...prev,
-                        location: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Supplier</Label>
-                  <Input
-                    value={editForm.supplier || ""}
-                    onChange={(e) =>
-                      setEditForm((prev) => ({
-                        ...prev,
-                        supplier: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Warranty (months)</Label>
-                  <Input
-                    type="number"
-                    value={editForm.warrantyMonths || ""}
-                    onChange={(e) =>
-                      setEditForm((prev) => ({
-                        ...prev,
-                        warrantyMonths: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-              </div>
-              {/* Tags Section */}
-              {tags && tags.length > 0 && (
-                <div className="space-y-2">
-                  <Label>Tags</Label>
-                  <div className="flex flex-wrap gap-2 p-4 border rounded-lg">
-                    {tags.map((tag) => {
-                      const isSelected = Array.isArray(editForm.tagIds)
-                        ? editForm.tagIds.includes(tag.id)
-                        : false;
-                      return (
-                        <label
-                          key={tag.id}
-                          className={`flex items-center gap-2 rounded-md border px-3 py-2 cursor-pointer transition-colors ${
-                            isSelected
-                              ? "bg-primary/10 border-primary"
-                              : "hover:bg-muted/50"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={(e) => {
-                              setEditForm((prev) => {
-                                const currentTags = Array.isArray(prev.tagIds)
-                                  ? prev.tagIds
-                                  : [];
-                                const newTags = e.target.checked
-                                  ? [...currentTags, tag.id]
-                                  : currentTags.filter((id) => id !== tag.id);
-                                return { ...prev, tagIds: newTags };
-                              });
-                            }}
-                            className="rounded"
-                          />
-                          <span className="text-sm">{tag.name}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-              <div className="space-y-2">
-                <Label>Specifications</Label>
-                <Textarea
-                  value={editForm.specs || ""}
-                  onChange={(e) =>
-                    setEditForm((prev) => ({ ...prev, specs: e.target.value }))
-                  }
-                  rows={2}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Compatibility</Label>
-                <Textarea
-                  value={editForm.compatibility || ""}
-                  onChange={(e) =>
-                    setEditForm((prev) => ({
-                      ...prev,
-                      compatibility: e.target.value,
-                    }))
-                  }
-                  rows={2}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Notes</Label>
-                <Textarea
-                  value={editForm.notes || ""}
-                  onChange={(e) =>
-                    setEditForm((prev) => ({ ...prev, notes: e.target.value }))
-                  }
-                  rows={3}
-                />
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleEditSubmit} disabled={isSubmitting}>
-              {isSubmitting ? "Saving..." : "Save Changes"}
-            </Button>
-          </DialogFooter>
+          {editProduct && (
+            <ProductForm
+              categories={categories}
+              tags={tags}
+              defaultValues={{
+                name: editProduct.name ?? "",
+                sku: editProduct.sku ?? "",
+                categoryId: editProduct.categoryId ?? "",
+                manufacturer: editProduct.manufacturer ?? "",
+                model: editProduct.model ?? "",
+                quantity: editProduct.quantity ?? 0,
+                lowStockAt: editProduct.lowStockAt ?? undefined,
+                condition:
+                  (editProduct.condition as Condition | undefined) ?? "new",
+                location: editProduct.location ?? "",
+                price: Number(editProduct.price ?? 0),
+                warrantyMonths: editProduct.warrantyMonths ?? undefined,
+                notes: editProduct.notes ?? "",
+                compatibility: editProduct.compatibility ?? "",
+                supplier: editProduct.supplier ?? "",
+                specs: editProduct.specs ?? "",
+                imageUrl: editProduct.imageUrl ?? "",
+                tagIds: editProduct.tags?.map((t) => t.id) ?? [],
+              }}
+              productId={editProduct.id}
+              onSuccess={handleEditSuccess}
+              submitLabel="Save Changes"
+              showResetButton={false}
+            />
+          )}
         </DialogContent>
       </Dialog>
       {/* Details Dialog/Drawer */}
