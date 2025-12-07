@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition, useCallback } from "react";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -22,15 +22,16 @@ export default function CreateSalePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [productError, setProductError] = useState<string | null>(null);
 
-  // Fetch products for search
-  useEffect(() => {
-    async function loadProducts() {
+  // React 19.2: useTransition for non-blocking product loading
+  const [isLoadingProducts, startProductTransition] = useTransition();
+
+  // Memoized product loader function
+  const loadProducts = useCallback(() => {
+    startProductTransition(async () => {
       try {
         console.log(" Fetching products for create sale...");
-        setIsLoadingProducts(true);
         setProductError(null);
 
         const result = await ProductService.getProducts();
@@ -50,12 +51,14 @@ export default function CreateSalePage() {
         console.error(" Exception while fetching products:", error);
         setProductError("An unexpected error occurred");
         toast.error("Failed to load products");
-      } finally {
-        setIsLoadingProducts(false);
       }
-    }
-    loadProducts();
+    });
   }, []);
+
+  // Fetch products on mount
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
 
   const handleAddToCart = (product: Product) => {
     setCartItems((prev) => {
@@ -139,11 +142,8 @@ export default function CreateSalePage() {
 
         setCartItems([]);
         router.refresh();
-        // Refresh products to update stock
-        const productResult = await ProductService.getProducts();
-        if (productResult.success && productResult.data) {
-          setProducts(productResult.data);
-        }
+        // Refresh products to update stock using transition
+        loadProducts();
       } else {
         toast.error(result.message || "Failed to create sale");
       }

@@ -14,7 +14,7 @@ import { IconPlus, IconTags } from "@tabler/icons-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Inventory | Hardware Management",
+  title: "Inventory Management",
 };
 
 type PageProps = {
