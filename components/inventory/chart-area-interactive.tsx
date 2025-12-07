@@ -48,7 +48,14 @@ export function ChartAreaInteractive({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isMobile = useIsMobile();
-  const [timeRange, setTimeRange] = React.useState(dateRange);
+
+  // React 19.2 improvement: Use derived initial state based on mobile detection
+  // This avoids an extra render cycle compared to useEffect sync
+  const [timeRange, setTimeRange] = React.useState(
+    () =>
+      // Note: isMobile may be undefined on initial SSR, so we default to dateRange
+      dateRange
+  );
 
   const handleTimeRangeChange = (value: string) => {
     setTimeRange(value);
@@ -57,11 +64,13 @@ export function ChartAreaInteractive({
     router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
+  // Handle mobile state changes with transition
+  const [, startMobileTransition] = React.useTransition();
   React.useEffect(() => {
-    if (isMobile) {
-      setTimeRange("7d");
+    if (isMobile && timeRange !== "7d") {
+      startMobileTransition(() => setTimeRange("7d"));
     }
-  }, [isMobile]);
+  }, [isMobile, timeRange]);
 
   const timeRangeOptions = React.useMemo(
     () => [

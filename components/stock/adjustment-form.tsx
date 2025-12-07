@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,15 +34,23 @@ export function AdjustmentForm() {
   const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    async function loadProducts() {
+  // React 19.2: useTransition for non-blocking product loading
+  const [isLoadingProducts, startLoadTransition] = useTransition();
+
+  // Memoized product loader
+  const loadProducts = useCallback(() => {
+    startLoadTransition(async () => {
       const result = await ProductService.getProducts();
       if (result.success && result.data) {
         setProducts(result.data);
       }
-    }
-    loadProducts();
+    });
   }, []);
+
+  // Load products on mount
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
 
   const selectedProduct = products.find((p) => p.id === selectedProductId);
 
@@ -83,11 +91,8 @@ export function AdjustmentForm() {
         setQuantity("");
         setReason("");
         router.refresh();
-        // Refresh products
-        const productResult = await ProductService.getProducts();
-        if (productResult.success && productResult.data) {
-          setProducts(productResult.data);
-        }
+        // Refresh products using transition
+        loadProducts();
       } else {
         toast.error(result.message || "Failed to adjust stock");
       }
@@ -114,9 +119,16 @@ export function AdjustmentForm() {
             <Select
               value={selectedProductId}
               onValueChange={setSelectedProductId}
+              disabled={isLoadingProducts}
             >
               <SelectTrigger id="product">
-                <SelectValue placeholder="Select a product" />
+                <SelectValue
+                  placeholder={
+                    isLoadingProducts
+                      ? "Loading products..."
+                      : "Select a product"
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
                 {products.map((product) => (

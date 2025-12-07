@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,23 +26,28 @@ export function ProductSearch({
   const debouncedSearch = useDebounce(searchTerm, 300);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
+  // React 19.2: useTransition for non-blocking search filtering
+  const [isFiltering, startFilterTransition] = useTransition();
+
   useEffect(() => {
-    if (!debouncedSearch) {
-      setFilteredProducts([]);
-      return;
-    }
+    startFilterTransition(() => {
+      if (!debouncedSearch) {
+        setFilteredProducts([]);
+        return;
+      }
 
-    const lower = debouncedSearch.toLowerCase();
-    const filtered = products
-      .filter(
-        (p) =>
-          p.name.toLowerCase().includes(lower) ||
-          (p.sku && p.sku.toLowerCase().includes(lower)) ||
-          (p.manufacturer && p.manufacturer.toLowerCase().includes(lower))
-      )
-      .slice(0, 5); // Limit results
+      const lower = debouncedSearch.toLowerCase();
+      const filtered = products
+        .filter(
+          (p) =>
+            p.name.toLowerCase().includes(lower) ||
+            (p.sku && p.sku.toLowerCase().includes(lower)) ||
+            (p.manufacturer && p.manufacturer.toLowerCase().includes(lower))
+        )
+        .slice(0, 5); // Limit results
 
-    setFilteredProducts(filtered);
+      setFilteredProducts(filtered);
+    });
   }, [debouncedSearch, products]);
 
   return (

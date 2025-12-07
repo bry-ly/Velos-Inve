@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface Tag {
   id: string;
@@ -42,13 +42,18 @@ export function MediaSection({ form, tags }: MediaSectionProps) {
     setInitialImage,
   } = useImageUpload();
 
-  // Sync initial imageUrl from form to preview
+  // React 19.2 improvement: One-time initialization using useRef
+  // This prevents unnecessary re-syncs and makes intent clearer
+  const hasInitialized = useRef(false);
+
   useEffect(() => {
+    if (hasInitialized.current) return;
     const currentImageUrl = form.getValues("imageUrl");
-    if (currentImageUrl && !imagePreview) {
+    if (currentImageUrl) {
       setInitialImage(currentImageUrl);
+      hasInitialized.current = true;
     }
-  }, [form, imagePreview, setInitialImage]);
+  }, [form, setInitialImage]);
 
   return (
     <Card>
