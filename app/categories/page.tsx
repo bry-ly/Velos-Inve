@@ -131,7 +131,7 @@ export default async function CategoriesPage(props: PageProps) {
                 </Badge>
               </div>
             </div>
-
+            
             <CategoryManager
               categories={categorySummaries}
               selectedCategory={
