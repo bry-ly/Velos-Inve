@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../app/generated/prisma/client";
 
 type ActivityType = "create" | "update" | "delete" | "stock_adjustment";
 type EntityType = "product" | "tag" | "category" | "sale";
@@ -22,9 +22,10 @@ export async function logActivity({
   action,
   changes,
   note,
-}: LogActivityParams) {
+  tx,
+}: LogActivityParams & { tx?: Prisma.TransactionClient }) {
   try {
-    await prisma.activityLog.create({
+    await (tx || prisma).activityLog.create({
       data: {
         userId,
         actorId,

@@ -16,14 +16,6 @@ const emptyStringToUndefined = z
     return val.trim();
   });
 
-/**
- * Helper to preprocess numeric fields (handles string coercion from FormData)
- */
-const numericField = z.preprocess((val) => {
-  if (val === undefined || val === null || val === "") return undefined;
-  const parsed = Number(val);
-  return isNaN(parsed) ? undefined : parsed;
-}, z.number().optional());
 
 /**
  * Client-side schema for react-hook-form
