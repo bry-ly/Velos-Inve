@@ -2,7 +2,7 @@
  * FormData → payload parsing for product operations
  */
 
-import { ProductSchema, ProductInput } from "@/lib/validations/product";
+import { ProductSchema } from "@/lib/validations/product";
 import { formatZodErrors } from "./action-utils";
 
 /**

@@ -4,7 +4,7 @@
  */
 
 import { prisma } from "@/lib/prisma/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "../../app/generated/prisma/client";
 import { ProductInput } from "@/lib/validations/product";
 import { logActivity } from "@/lib/logger/logger";
 
@@ -150,6 +150,7 @@ export async function upsertProductTransaction(params: {
           after: product as unknown as Prisma.JsonObject,
         },
         note: `Updated product: ${product.name}`,
+        tx,
       });
     } else {
       // CREATE
@@ -175,6 +176,7 @@ export async function upsertProductTransaction(params: {
         action: "create",
         changes: product as unknown as Prisma.JsonObject,
         note: `Created product: ${product.name}`,
+        tx,
       });
     }
 
@@ -209,6 +211,7 @@ export async function deleteProductTransaction(params: {
       entityId: productId,
       action: "delete",
       note: `Deleted product: ${productName}`,
+      tx,
     });
   });
 }
@@ -253,6 +256,7 @@ export async function adjustStockTransaction(params: {
         adjustment: adjustment,
       } as Prisma.JsonObject,
       note: `Adjusted stock for ${productName} by ${adjustment}`,
+      tx,
     });
 
     return updated;
