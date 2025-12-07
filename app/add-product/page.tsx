@@ -30,10 +30,12 @@ export default async function AddProductPage() {
       orderBy: { name: "asc" },
     }),
   ]);
-  const categoryOptions = categories.map((category) => ({
-    id: category.id,
-    name: category.name,
-  }));
+  const categoryOptions = categories.map(
+    (category: { id: string; name: string }) => ({
+      id: category.id,
+      name: category.name,
+    })
+  );
   const tagOptions = tags.map((tag) => ({
     id: tag.id,
     name: tag.name,
@@ -61,7 +63,12 @@ export default async function AddProductPage() {
         <SiteHeader action={<AddCategoryButton />} />
         <main className="p-8">
           <div className="max-w-4xl justify-center mx-auto">
-            <ProductForm categories={categoryOptions} tags={tagOptions} submitLabel="Add product to inventory" showResetButton={true} />
+            <ProductForm
+              categories={categoryOptions}
+              tags={tagOptions}
+              submitLabel="Add product to inventory"
+              showResetButton={true}
+            />
           </div>
         </main>
       </SidebarInset>
