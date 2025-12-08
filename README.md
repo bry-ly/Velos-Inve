@@ -93,6 +93,13 @@
   - Flexible tagging system
   - Category-based filtering and analytics
 
+- **Saved Filters**
+  - Save complex filter combinations as presets
+  - Quick access to frequently used filters
+  - Set default filter that auto-applies on page load
+  - User-scoped filter management
+  - Persistent filter storage
+
 ### 📊 Analytics & Reporting
 
 - **Dashboard Analytics**
@@ -409,6 +416,14 @@ The project uses Next.js 15 with Turbopack for faster development builds. Config
 - Tracks all changes to entities
 - Includes actor information and change details
 
+#### InventoryFilter
+
+- Persistent filter presets for inventory views
+- Stores filter combinations as JSON
+- Supports default filter per user
+- User-scoped with unique filter names
+- Includes search, category, manufacturer, condition, and stock filters
+
 #### Session & Account
 
 - Better Auth session management
@@ -421,6 +436,7 @@ The project uses Next.js 15 with Turbopack for faster development builds. Config
 - `ActivityLog`: Indexed on `userId + createdAt`, `entityType + entityId`
 - `Category`: Unique constraint on `userId + name`
 - `Tag`: Unique constraint on `userId + name`
+- `InventoryFilter`: Indexed on `userId + isDefault`, unique constraint on `userId + name`
 
 ---
 
@@ -448,6 +464,15 @@ The project uses Next.js 15 with Turbopack for faster development builds. Config
   - Column visibility controls
   - Bulk actions
   - Export functionality
+
+- **Saved Filters Menu** (`components/inventory/saved-filters-menu.tsx`)
+
+  - Save current filter combinations as reusable presets
+  - Quick apply saved filters with one click
+  - Set default filter that auto-applies on page load
+  - Delete unwanted filter presets
+  - Optimistic UI updates with toast notifications
+  - User-scoped filter management
 
 - **Category Manager** (`components/inventory/category-manager.tsx`)
 

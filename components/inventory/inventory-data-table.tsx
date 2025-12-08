@@ -99,16 +99,29 @@ import type { Condition } from "@/lib/constants/inventory";
 import { ProductNameCell } from "./columns/cells/product-name-cell";
 import { QuantityCell } from "./columns/cells/quantity-cell";
 import { ActionsCell } from "./columns/cells/actions-cell";
+import { SavedFiltersMenu } from "./saved-filters-menu";
+
+interface SavedFilter {
+  id: string;
+  name: string;
+  filters: Record<string, unknown>;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface InventoryDataTableProps {
   items: Product[];
   categories: CategoryOption[];
   tags: { id: string; name: string }[];
+  savedFilters?: SavedFilter[];
   initialFilters?: InitialFilters;
 }
 export function InventoryDataTable({
   items,
   categories,
   tags,
+  savedFilters = [],
   initialFilters,
 }: InventoryDataTableProps) {
   const router = useRouter();
@@ -553,6 +566,7 @@ export function InventoryDataTable({
             <IconAlertCircle className="h-4 w-4 mr-2" />
             Low Stock
           </Button>
+          <SavedFiltersMenu filters={savedFilters} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">

@@ -37,7 +37,7 @@ export default async function InventoryPage(props: PageProps) {
 
   const userId = user.id;
 
-  const [allProducts, categories, tags] = await Promise.all([
+  const [allProducts, categories, tags, savedFilters] = await Promise.all([
     prisma.product.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
@@ -60,6 +60,10 @@ export default async function InventoryPage(props: PageProps) {
     prisma.tag.findMany({
       where: { userId },
       orderBy: { name: "asc" },
+    }),
+    prisma.inventoryFilter.findMany({
+      where: { userId },
+      orderBy: [{ isDefault: "desc" }, { createdAt: "desc" }],
     }),
   ]);
 
@@ -90,6 +94,61 @@ export default async function InventoryPage(props: PageProps) {
     userId: p.userId,
     createdAt: p.createdAt.toISOString(),
     tags: p.tags.map((t) => ({ id: t.tag.id, name: t.tag.name })),
+  }));
+
+  const hasUrlFilters =
+    searchParams.search ||
+    searchParams.category ||
+    searchParams.manufacturer ||
+    searchParams.condition ||
+    searchParams.lowStock;
+
+  const defaultFilter = savedFilters.find((f) => f.isDefault);
+
+  if (!hasUrlFilters && defaultFilter) {
+    const filterData = defaultFilter.filters as Record<
+      string,
+      string | boolean | number
+    >;
+    const params = new URLSearchParams();
+
+    if (filterData.search && typeof filterData.search === "string") {
+      params.set("search", filterData.search);
+    }
+    if (filterData.category && typeof filterData.category === "string") {
+      params.set("category", filterData.category);
+    }
+    if (
+      filterData.manufacturer &&
+      typeof filterData.manufacturer === "string"
+    ) {
+      params.set("manufacturer", filterData.manufacturer);
+    }
+    if (filterData.condition && typeof filterData.condition === "string") {
+      params.set("condition", filterData.condition);
+    }
+    if (filterData.lowStock === true) {
+      params.set("lowStock", "true");
+    }
+    if (filterData.page && typeof filterData.page === "number") {
+      params.set("page", String(filterData.page));
+    }
+    if (filterData.pageSize && typeof filterData.pageSize === "number") {
+      params.set("pageSize", String(filterData.pageSize));
+    }
+
+    if (params.toString()) {
+      redirect(`/inventory?${params.toString()}`);
+    }
+  }
+
+  const serializedFilters = savedFilters.map((f) => ({
+    id: f.id,
+    name: f.name,
+    filters: f.filters as Record<string, unknown>,
+    isDefault: f.isDefault,
+    createdAt: f.createdAt.toISOString(),
+    updatedAt: f.updatedAt.toISOString(),
   }));
 
   return (
@@ -144,6 +203,7 @@ export default async function InventoryPage(props: PageProps) {
                     id,
                     name,
                   }))}
+                  savedFilters={serializedFilters}
                   initialFilters={{
                     search: (searchParams.search as string) ?? "",
                     category: (searchParams.category as string) ?? "all",

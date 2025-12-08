@@ -8,20 +8,21 @@ datasource db {
 }
 
 model User {
-  id            String        @id
+  id            String            @id
   name          String
-  email         String        @unique
-  emailVerified Boolean       @default(false)
+  email         String            @unique
+  emailVerified Boolean           @default(false)
   image         String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @default(now()) @updatedAt
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @default(now()) @updatedAt
   accounts      Account[]
-  actedActivity ActivityLog[] @relation("ActivityActor")
-  ownedActivity ActivityLog[] @relation("ActivityOwner")
+  actedActivity ActivityLog[]     @relation("ActivityActor")
+  ownedActivity ActivityLog[]     @relation("ActivityOwner")
   sales         Sale[]
   categories    Category[]
   sessions      Session[]
   tags          Tag[]
+  savedFilters  InventoryFilter[]
 
   @@map("user")
 }
@@ -195,4 +196,19 @@ model SaleItem {
 
   @@index([saleId])
   @@map("sale_item")
+}
+
+model InventoryFilter {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  filters   Json
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
+  @@index([userId, isDefault])
+  @@map("inventory_filter")
 }
