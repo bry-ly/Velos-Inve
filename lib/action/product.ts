@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma/prisma";
+import { Prisma } from "../../app/generated/prisma/client";
 import {
   requireAuthedUser,
   successResult,
@@ -250,7 +251,7 @@ export async function getLowStockProducts() {
   try {
     const user = await requireAuthedUser();
 
-    // Use raw SQL for efficient column comparison
+    // Use raw SQL for efficient column comparison with proper parameterization
     // This pushes the filtering to the database instead of JavaScript
     const products = await prisma.$queryRaw<
       Array<{
@@ -265,7 +266,7 @@ export async function getLowStockProducts() {
         lowStockAt: number | null;
         condition: string;
         location: string | null;
-        price: any;
+        price: Prisma.Decimal;
         specs: string | null;
         compatibility: string | null;
         supplier: string | null;
@@ -275,13 +276,15 @@ export async function getLowStockProducts() {
         createdAt: Date;
         updatedAt: Date;
       }>
-    >`
-      SELECT * FROM "Product"
-      WHERE "userId" = ${user.id}
-        AND "lowStockAt" IS NOT NULL
-        AND "quantity" <= "lowStockAt"
-      ORDER BY "quantity" ASC
-    `;
+    >(
+      Prisma.sql`
+        SELECT * FROM "Product"
+        WHERE "userId" = ${user.id}
+          AND "lowStockAt" IS NOT NULL
+          AND "quantity" <= "lowStockAt"
+        ORDER BY "quantity" ASC
+      `
+    );
 
     return {
       success: true,
@@ -305,7 +308,7 @@ export async function getInventoryAnalytics() {
   try {
     const user = await requireAuthedUser();
 
-    // Use parallel queries for better performance
+    // Use parallel queries for better performance with proper parameterization
     const [
       totalStats,
       lowStockCount,
@@ -315,40 +318,48 @@ export async function getInventoryAnalytics() {
     ] = await Promise.all([
       // Get total products and total value in a single query
       prisma.$queryRaw<
-        Array<{ totalProducts: bigint; totalValue: any }>
-      >`
-        SELECT 
-          COUNT(*)::bigint as "totalProducts",
-          COALESCE(SUM("price" * "quantity"), 0) as "totalValue"
-        FROM "Product"
-        WHERE "userId" = ${user.id}
-      `,
+        Array<{ totalProducts: bigint; totalValue: Prisma.Decimal }>
+      >(
+        Prisma.sql`
+          SELECT 
+            COUNT(*)::bigint as "totalProducts",
+            COALESCE(SUM("price" * "quantity"), 0) as "totalValue"
+          FROM "Product"
+          WHERE "userId" = ${user.id}
+        `
+      ),
       // Get low stock count
-      prisma.$queryRaw<Array<{ count: bigint }>>`
-        SELECT COUNT(*)::bigint as count
-        FROM "Product"
-        WHERE "userId" = ${user.id}
-          AND "lowStockAt" IS NOT NULL
-          AND "quantity" <= "lowStockAt"
-      `,
+      prisma.$queryRaw<Array<{ count: bigint }>>(
+        Prisma.sql`
+          SELECT COUNT(*)::bigint as count
+          FROM "Product"
+          WHERE "userId" = ${user.id}
+            AND "lowStockAt" IS NOT NULL
+            AND "quantity" <= "lowStockAt"
+        `
+      ),
       // Get out of stock count
-      prisma.$queryRaw<Array<{ count: bigint }>>`
-        SELECT COUNT(*)::bigint as count
-        FROM "Product"
-        WHERE "userId" = ${user.id}
-          AND "quantity" = 0
-      `,
+      prisma.$queryRaw<Array<{ count: bigint }>>(
+        Prisma.sql`
+          SELECT COUNT(*)::bigint as count
+          FROM "Product"
+          WHERE "userId" = ${user.id}
+            AND "quantity" = 0
+        `
+      ),
       // Get category breakdown with aggregation
       prisma.$queryRaw<
-        Array<{ categoryId: string | null; totalValue: any }>
-      >`
-        SELECT 
-          "categoryId",
-          COALESCE(SUM("price" * "quantity"), 0) as "totalValue"
-        FROM "Product"
-        WHERE "userId" = ${user.id}
-        GROUP BY "categoryId"
-      `,
+        Array<{ categoryId: string | null; totalValue: Prisma.Decimal }>
+      >(
+        Prisma.sql`
+          SELECT 
+            "categoryId",
+            COALESCE(SUM("price" * "quantity"), 0) as "totalValue"
+          FROM "Product"
+          WHERE "userId" = ${user.id}
+          GROUP BY "categoryId"
+        `
+      ),
       // Get category names
       prisma.category.findMany({
         where: { userId: user.id },
