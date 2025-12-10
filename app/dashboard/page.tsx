@@ -70,9 +70,19 @@ export default async function DashboardPage(props: PageProps) {
 
   // If we have products, calculate value based on creation dates
   if (allProducts.length > 0) {
-    // Sort products by creation date once (O(n log n))
-    const sortedProducts = [...allProducts].sort(
-      (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+    // Pre-normalize product creation dates once to avoid repeated date operations
+    const productsWithNormalizedDates = allProducts.map((p) => {
+      const normalizedDate = new Date(p.createdAt);
+      normalizedDate.setHours(0, 0, 0, 0);
+      return {
+        product: p,
+        normalizedTimestamp: normalizedDate.getTime(),
+      };
+    });
+
+    // Sort products by normalized creation date once (O(n log n))
+    const sortedProducts = productsWithNormalizedDates.sort(
+      (a, b) => a.normalizedTimestamp - b.normalizedTimestamp
     );
 
     let productIndex = 0;
@@ -84,14 +94,14 @@ export default async function DashboardPage(props: PageProps) {
       date.setDate(date.getDate() - (days - i - 1));
       date.setHours(0, 0, 0, 0);
       const dateStr = date.toISOString().split("T")[0];
+      const dateTimestamp = date.getTime();
 
       // Add all products created up to this date (O(n) total across all iterations)
       while (
         productIndex < sortedProducts.length &&
-        new Date(sortedProducts[productIndex].createdAt).setHours(0, 0, 0, 0) <=
-          date.getTime()
+        sortedProducts[productIndex].normalizedTimestamp <= dateTimestamp
       ) {
-        const p = sortedProducts[productIndex];
+        const p = sortedProducts[productIndex].product;
         cumulativeValue += Number(p.price) * p.quantity;
         productIndex++;
       }

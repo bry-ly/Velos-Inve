@@ -77,8 +77,8 @@ export async function mutateProductTags(
   // Determine what to add and remove
   const toAdd = tagIds.filter((id) => !existingTagIds.has(id));
   const toRemove = existingTags
-    .map((t) => t.tagId)
-    .filter((id) => !newTagIds.has(id));
+    .filter((t) => !newTagIds.has(t.tagId))
+    .map((t) => t.tagId);
 
   // Only execute operations if needed
   if (toRemove.length > 0) {
