@@ -135,6 +135,8 @@ model ProductTag {
   tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@unique([productId, tagId])
+  @@index([productId])
+  @@index([tagId])
   @@map("product_tag")
 }
 

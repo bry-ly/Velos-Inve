@@ -63,35 +63,52 @@ export default async function DashboardPage(props: PageProps) {
   }).length;
 
   // Calculate inventory value trend over the last year (365 days)
-  // For simplicity, we'll show the total value for each day
-  // In a real system, you'd track daily changes
+  // Optimized: sort products once by creation date, then accumulate values
   const days = 365;
   const chartData: { date: string; value: number }[] = [];
   const currentDate = new Date();
 
   // If we have products, calculate value based on creation dates
   if (allProducts.length > 0) {
+    // Pre-normalize product creation dates once to avoid repeated date operations
+    const productsWithNormalizedDates = allProducts.map((p) => {
+      const normalizedDate = new Date(p.createdAt);
+      normalizedDate.setHours(0, 0, 0, 0);
+      return {
+        product: p,
+        normalizedTimestamp: normalizedDate.getTime(),
+      };
+    });
+
+    // Sort products by normalized creation date once (O(n log n))
+    const sortedProducts = productsWithNormalizedDates.sort(
+      (a, b) => a.normalizedTimestamp - b.normalizedTimestamp
+    );
+
+    let productIndex = 0;
+    let cumulativeValue = 0;
+
+    // Iterate through each day (O(days))
     for (let i = 0; i < days; i++) {
       const date = new Date(currentDate);
       date.setDate(date.getDate() - (days - i - 1));
       date.setHours(0, 0, 0, 0);
       const dateStr = date.toISOString().split("T")[0];
+      const dateTimestamp = date.getTime();
 
-      // Calculate inventory value up to this date
-      const productsUntilDate = allProducts.filter((p) => {
-        const productDate = new Date(p.createdAt);
-        productDate.setHours(0, 0, 0, 0);
-        return productDate <= date;
-      });
-
-      const value = productsUntilDate.reduce(
-        (sum, p) => sum + Number(p.price) * p.quantity,
-        0
-      );
+      // Add all products created up to this date (O(n) total across all iterations)
+      while (
+        productIndex < sortedProducts.length &&
+        sortedProducts[productIndex].normalizedTimestamp <= dateTimestamp
+      ) {
+        const p = sortedProducts[productIndex].product;
+        cumulativeValue += Number(p.price) * p.quantity;
+        productIndex++;
+      }
 
       chartData.push({
         date: dateStr,
-        value: value,
+        value: cumulativeValue,
       });
     }
   } else {
