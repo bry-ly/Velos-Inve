@@ -59,9 +59,10 @@ export async function bulkUpdateProducts(
         userId: user.id,
         actorId: user.id,
         entityType: "product",
-        entityId: null,
-        action: "bulk_update",
+        entityId: productIds[0], // Log first product ID as reference
+        action: "update",
         changes: {
+          operation: "bulk_update",
           productIds,
           updates,
           count: productIds.length,
@@ -129,9 +130,10 @@ export async function bulkDeleteProducts(
         userId: user.id,
         actorId: user.id,
         entityType: "product",
-        entityId: null,
-        action: "bulk_delete",
+        entityId: productIds[0], // Log first product ID as reference
+        action: "delete",
         changes: {
+          operation: "bulk_delete",
           productIds,
           productNames: products.map((p) => p.name),
           count: productIds.length,
@@ -227,9 +229,10 @@ export async function bulkAdjustStock(
         userId: user.id,
         actorId: user.id,
         entityType: "product",
-        entityId: null,
-        action: "bulk_stock_adjustment",
+        entityId: adjustments[0].productId, // Log first product ID as reference
+        action: "stock_adjustment",
         changes: {
+          operation: "bulk_stock_adjustment",
           adjustments: adjustments.map((adj) => ({
             productId: adj.productId,
             productName: productMap.get(adj.productId)?.name,
@@ -344,6 +347,7 @@ export async function bulkImportProducts(
     }
 
     // Import products in transaction
+    let firstProductId: string | null = null;
     const importedCount = await prisma.$transaction(async (tx) => {
       let count = 0;
 
@@ -352,7 +356,7 @@ export async function bulkImportProducts(
           ? categoryMap.get(productData.categoryName.trim())
           : null;
 
-        await tx.product.create({
+        const product = await tx.product.create({
           data: {
             userId: user.id,
             name: productData.name.trim(),
@@ -373,6 +377,10 @@ export async function bulkImportProducts(
           },
         });
 
+        if (count === 0) {
+          firstProductId = product.id; // Store first product ID for logging
+        }
+
         count++;
       }
 
@@ -381,9 +389,10 @@ export async function bulkImportProducts(
         userId: user.id,
         actorId: user.id,
         entityType: "product",
-        entityId: null,
-        action: "bulk_import",
+        entityId: firstProductId || "unknown",
+        action: "create",
         changes: {
+          operation: "bulk_import",
           count,
           categories: categoryNames,
         },

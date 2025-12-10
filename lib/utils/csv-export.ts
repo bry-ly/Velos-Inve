@@ -11,7 +11,7 @@ export interface ExportProduct {
   Manufacturer: string;
   Model: string;
   Quantity: number;
-  Price: number;
+  Price: number | string; // Allow both types like Product
   Condition: string;
   Location: string;
   Category: string;
@@ -30,11 +30,11 @@ export function productsToCSVData(products: Product[]): ExportProduct[] {
   return products.map((product) => ({
     Name: product.name,
     SKU: product.sku || "",
-    Manufacturer: product.manufacturer,
+    Manufacturer: product.manufacturer || "",
     Model: product.model || "",
     Quantity: product.quantity,
     Price: product.price,
-    Condition: product.condition,
+    Condition: product.condition || "",
     Location: product.location || "",
     Category: product.categoryName || "",
     "Low Stock Threshold": product.lowStockAt ?? "",
