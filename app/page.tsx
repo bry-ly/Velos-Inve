@@ -6,6 +6,8 @@ import Features from "@/components/landing/features";
 import FooterSection from "@/components/landing/footer";
 import ContentSection from "@/components/landing/content";
 import TeamSection from "@/components/landing/team";
+import SocialProof from "@/components/landing/social-proof";
+import Pricing from "@/components/landing/pricing";
 
 export default async function Home() {
   const user = await auth.api
@@ -20,11 +22,15 @@ export default async function Home() {
   return (
     <main>
       <HeroSection />
+      <SocialProof />
+      <div id="features">
+        <Features />
+      </div>
       <div id="content">
         <ContentSection />
       </div>
-      <div id="features">
-        <Features />
+      <div id="pricing">
+      <Pricing />
       </div>
       <div id="team">
         <TeamSection />
