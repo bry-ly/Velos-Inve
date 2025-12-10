@@ -15,6 +15,10 @@ const links = [
     href: "#team",
   },
   {
+    title: "Pricing",
+    href: "#pricing",
+  },
+  {
     title: "Demo",
     href: "/demo",
   },
