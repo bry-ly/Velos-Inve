@@ -98,6 +98,9 @@ model Product {
   @@index([userId, categoryId])
   @@index([manufacturer])
   @@index([createdAt])
+  @@index([quantity])
+  @@index([lowStockAt])
+  @@index([userId, quantity])
 }
 
 model Category {

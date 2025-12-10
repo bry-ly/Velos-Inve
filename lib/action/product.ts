@@ -244,26 +244,21 @@ export async function adjustStock(formData: FormData): Promise<ActionResult> {
 
 /**
  * Get low stock products for the current user
+ * Optimized: Use database filtering instead of in-memory filtering
  */
 export async function getLowStockProducts() {
   try {
     const user = await requireAuthedUser();
 
-    const products = await prisma.product.findMany({
-      where: {
-        userId: user.id,
-        lowStockAt: {
-          not: null,
-        },
-      },
-      orderBy: {
-        quantity: "asc",
-      },
-    });
-
-    const lowStockProducts = products.filter((p) => {
-      return p.lowStockAt !== null && p.quantity <= p.lowStockAt;
-    });
+    // Use Prisma's raw SQL for efficient comparison between columns
+    // This avoids fetching all products and filtering in memory
+    const lowStockProducts = await prisma.$queryRaw`
+      SELECT * FROM "Product"
+      WHERE "userId" = ${user.id}
+        AND "lowStockAt" IS NOT NULL
+        AND "quantity" <= "lowStockAt"
+      ORDER BY "quantity" ASC
+    `;
 
     return {
       success: true,
@@ -281,41 +276,91 @@ export async function getLowStockProducts() {
 
 /**
  * Get inventory analytics for the current user
+ * Optimized: Use database aggregation instead of fetching all records
  */
 export async function getInventoryAnalytics() {
   try {
     const user = await requireAuthedUser();
 
+    // Use aggregation for counts and calculations
+    const [
+      totalProducts,
+      totalValueResult,
+      lowStockCountResult,
+      outOfStockCount,
+      categoryStats,
+    ] = await Promise.all([
+      // Total product count
+      prisma.product.count({
+        where: { userId: user.id },
+      }),
+      
+      // Total inventory value using aggregate
+      prisma.product.aggregate({
+        where: { userId: user.id },
+        _sum: {
+          quantity: true,
+        },
+      }),
+      
+      // Low stock count using raw query for efficiency
+      prisma.$queryRaw<Array<{ count: bigint }>>`
+        SELECT COUNT(*)::int as count
+        FROM "Product"
+        WHERE "userId" = ${user.id}
+          AND "lowStockAt" IS NOT NULL
+          AND "quantity" <= "lowStockAt"
+      `,
+      
+      // Out of stock count
+      prisma.product.count({
+        where: {
+          userId: user.id,
+          quantity: 0,
+        },
+      }),
+      
+      // Category-wise aggregation
+      prisma.product.groupBy({
+        by: ['categoryId'],
+        where: { userId: user.id },
+        _count: {
+          id: true,
+        },
+      }),
+    ]);
+
+    // Fetch products with categories for value calculation
+    // Only fetch what we need for category breakdown
     const products = await prisma.product.findMany({
-      where: {
-        userId: user.id,
+      where: { userId: user.id },
+      select: {
+        price: true,
+        quantity: true,
+        categoryId: true,
       },
     });
 
-    const totalProducts = products.length;
     const totalValue = products.reduce(
       (sum, product) => sum + Number(product.price) * product.quantity,
       0
     );
 
-    const lowStockCount = products.filter((p) => {
-      return p.lowStockAt !== null && p.quantity <= p.lowStockAt;
-    }).length;
-
-    const outOfStockCount = products.filter((p) => p.quantity === 0).length;
-
-    // Group by category
-    const categoryIds = [
-      ...new Set(products.map((p) => p.categoryId).filter(Boolean)),
-    ];
+    // Get category names efficiently
+    const categoryIds = [...new Set(products.map((p) => p.categoryId).filter(Boolean))];
     const categories = await prisma.category.findMany({
       where: {
         id: { in: categoryIds as string[] },
+      },
+      select: {
+        id: true,
+        name: true,
       },
     });
 
     const categoryMap = new Map(categories.map((c) => [c.id, c.name]));
 
+    // Calculate value by category
     const valueByCategory = products.reduce(
       (acc, product) => {
         const catName = product.categoryId
@@ -327,6 +372,8 @@ export async function getInventoryAnalytics() {
       },
       {} as Record<string, number>
     );
+
+    const lowStockCount = Number(lowStockCountResult[0]?.count || 0);
 
     return {
       success: true,
