@@ -415,6 +415,10 @@ export async function bulkImportProducts(
     if (error instanceof Error && error.message === "Authentication required") {
       return failureResult("User not found. Please sign in.");
     }
-    return failureResult("Failed to import products. " + (error instanceof Error ? error.message : ""));
+    // Don't expose detailed error messages in production
+    const errorMessage = process.env.NODE_ENV === "development" 
+      ? (error instanceof Error ? error.message : "Unknown error")
+      : "An error occurred during import";
+    return failureResult("Failed to import products. " + errorMessage);
   }
 }

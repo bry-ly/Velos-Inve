@@ -33,7 +33,12 @@ class PerformanceMonitor {
 
       // Log slow operations
       if (duration > this.slowQueryThreshold) {
-        console.warn(`⚠️ Slow operation detected: ${operation} took ${duration}ms`, metadata);
+        // In production, use structured logging service
+        if (process.env.NODE_ENV === "development") {
+          console.warn(`⚠️ Slow operation detected: ${operation} took ${duration}ms`, metadata);
+        }
+        // TODO: In production, send to logging service like DataDog, Sentry, etc.
+        // Example: logger.warn('slow_operation', { operation, duration, metadata });
       }
 
       return duration;
