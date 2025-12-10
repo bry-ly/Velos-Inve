@@ -14,6 +14,8 @@ import {
   deleteProductTransaction,
   adjustStockTransaction,
 } from "@/lib/server/product-helpers";
+import { cache, cacheKeys, cacheTTL, invalidateUserCache } from "@/lib/utils/cache";
+import { measurePerformance } from "@/lib/utils/performance";
 
 /**
  * Create a new product
@@ -47,6 +49,9 @@ export async function createProduct(
 
     revalidatePath("/inventory");
     revalidatePath("/dashboard");
+    
+    // Invalidate cache after product creation
+    invalidateUserCache(user.id);
 
     return successResult("Product added successfully!");
   } catch (error) {
@@ -115,6 +120,9 @@ export async function updateProduct(
 
     revalidatePath("/inventory");
     revalidatePath("/dashboard");
+    
+    // Invalidate cache after product update
+    invalidateUserCache(user.id);
 
     return successResult("Product updated successfully.");
   } catch (error) {
@@ -160,6 +168,9 @@ export async function deleteProduct(
 
     revalidatePath("/inventory");
     revalidatePath("/dashboard");
+    
+    // Invalidate cache after product deletion
+    invalidateUserCache(user.id);
 
     return successResult("Product deleted successfully.");
   } catch (error) {
@@ -225,6 +236,9 @@ export async function adjustStock(formData: FormData): Promise<ActionResult> {
 
     revalidatePath("/inventory");
     revalidatePath("/dashboard");
+    
+    // Invalidate cache after stock adjustment
+    invalidateUserCache(user.id);
 
     return successResult(
       `Stock adjusted successfully. New quantity: ${result.newQuantity}`
@@ -245,25 +259,43 @@ export async function adjustStock(formData: FormData): Promise<ActionResult> {
 /**
  * Get low stock products for the current user
  * Optimized: Use database filtering instead of in-memory filtering
+ * With caching support
  */
 export async function getLowStockProducts() {
   try {
     const user = await requireAuthedUser();
+    
+    // Try to get from cache first
+    const cacheKey = cacheKeys.lowStockProducts(user.id);
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
 
     // Use Prisma's raw SQL for efficient comparison between columns
     // This avoids fetching all products and filtering in memory
-    const lowStockProducts = await prisma.$queryRaw`
-      SELECT * FROM "Product"
-      WHERE "userId" = ${user.id}
-        AND "lowStockAt" IS NOT NULL
-        AND "quantity" <= "lowStockAt"
-      ORDER BY "quantity" ASC
-    `;
+    const lowStockProducts = await measurePerformance(
+      "getLowStockProducts",
+      async () => {
+        return await prisma.$queryRaw`
+          SELECT * FROM "Product"
+          WHERE "userId" = ${user.id}
+            AND "lowStockAt" IS NOT NULL
+            AND "quantity" <= "lowStockAt"
+          ORDER BY "quantity" ASC
+        `;
+      }
+    );
 
-    return {
+    const result = {
       success: true,
       data: lowStockProducts,
     };
+    
+    // Cache the result
+    cache.set(cacheKey, result, cacheTTL.lowStock);
+    
+    return result;
   } catch (error) {
     console.error("Error fetching low stock products:", error);
     return {
@@ -277,114 +309,134 @@ export async function getLowStockProducts() {
 /**
  * Get inventory analytics for the current user
  * Optimized: Use database aggregation instead of fetching all records
+ * With caching support
  */
 export async function getInventoryAnalytics() {
   try {
     const user = await requireAuthedUser();
+    
+    // Try to get from cache first
+    const cacheKey = cacheKeys.analytics(user.id);
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
 
-    // Use aggregation for counts and calculations
-    const [
-      totalProducts,
-      totalValueResult,
-      lowStockCountResult,
-      outOfStockCount,
-      categoryStats,
-    ] = await Promise.all([
-      // Total product count
-      prisma.product.count({
-        where: { userId: user.id },
-      }),
-      
-      // Total inventory value using aggregate
-      prisma.product.aggregate({
-        where: { userId: user.id },
-        _sum: {
-          quantity: true,
-        },
-      }),
-      
-      // Low stock count using raw query for efficiency
-      prisma.$queryRaw<Array<{ count: bigint }>>`
-        SELECT COUNT(*)::int as count
-        FROM "Product"
-        WHERE "userId" = ${user.id}
-          AND "lowStockAt" IS NOT NULL
-          AND "quantity" <= "lowStockAt"
-      `,
-      
-      // Out of stock count
-      prisma.product.count({
-        where: {
-          userId: user.id,
-          quantity: 0,
-        },
-      }),
-      
-      // Category-wise aggregation
-      prisma.product.groupBy({
-        by: ['categoryId'],
-        where: { userId: user.id },
-        _count: {
-          id: true,
-        },
-      }),
-    ]);
+    const analyticsData = await measurePerformance(
+      "getInventoryAnalytics",
+      async () => {
+        // Use aggregation for counts and calculations
+        const [
+          totalProducts,
+          totalValueResult,
+          lowStockCountResult,
+          outOfStockCount,
+          categoryStats,
+        ] = await Promise.all([
+          // Total product count
+          prisma.product.count({
+            where: { userId: user.id },
+          }),
+          
+          // Total inventory value using aggregate
+          prisma.product.aggregate({
+            where: { userId: user.id },
+            _sum: {
+              quantity: true,
+            },
+          }),
+          
+          // Low stock count using raw query for efficiency
+          prisma.$queryRaw<Array<{ count: bigint }>>`
+            SELECT COUNT(*)::int as count
+            FROM "Product"
+            WHERE "userId" = ${user.id}
+              AND "lowStockAt" IS NOT NULL
+              AND "quantity" <= "lowStockAt"
+          `,
+          
+          // Out of stock count
+          prisma.product.count({
+            where: {
+              userId: user.id,
+              quantity: 0,
+            },
+          }),
+          
+          // Category-wise aggregation
+          prisma.product.groupBy({
+            by: ['categoryId'],
+            where: { userId: user.id },
+            _count: {
+              id: true,
+            },
+          }),
+        ]);
 
-    // Fetch products with categories for value calculation
-    // Only fetch what we need for category breakdown
-    const products = await prisma.product.findMany({
-      where: { userId: user.id },
-      select: {
-        price: true,
-        quantity: true,
-        categoryId: true,
-      },
-    });
+        // Fetch products with categories for value calculation
+        // Only fetch what we need for category breakdown
+        const products = await prisma.product.findMany({
+          where: { userId: user.id },
+          select: {
+            price: true,
+            quantity: true,
+            categoryId: true,
+          },
+        });
 
-    const totalValue = products.reduce(
-      (sum, product) => sum + Number(product.price) * product.quantity,
-      0
+        const totalValue = products.reduce(
+          (sum, product) => sum + Number(product.price) * product.quantity,
+          0
+        );
+
+        // Get category names efficiently
+        const categoryIds = [...new Set(products.map((p) => p.categoryId).filter(Boolean))];
+        const categories = await prisma.category.findMany({
+          where: {
+            id: { in: categoryIds as string[] },
+          },
+          select: {
+            id: true,
+            name: true,
+          },
+        });
+
+        const categoryMap = new Map(categories.map((c) => [c.id, c.name]));
+
+        // Calculate value by category
+        const valueByCategory = products.reduce(
+          (acc, product) => {
+            const catName = product.categoryId
+              ? categoryMap.get(product.categoryId) || "Uncategorized"
+              : "Uncategorized";
+            acc[catName] =
+              (acc[catName] || 0) + Number(product.price) * product.quantity;
+            return acc;
+          },
+          {} as Record<string, number>
+        );
+
+        const lowStockCount = Number(lowStockCountResult[0]?.count || 0);
+
+        return {
+          totalProducts,
+          totalValue,
+          lowStockCount,
+          outOfStockCount,
+          valueByCategory,
+        };
+      }
     );
 
-    // Get category names efficiently
-    const categoryIds = [...new Set(products.map((p) => p.categoryId).filter(Boolean))];
-    const categories = await prisma.category.findMany({
-      where: {
-        id: { in: categoryIds as string[] },
-      },
-      select: {
-        id: true,
-        name: true,
-      },
-    });
-
-    const categoryMap = new Map(categories.map((c) => [c.id, c.name]));
-
-    // Calculate value by category
-    const valueByCategory = products.reduce(
-      (acc, product) => {
-        const catName = product.categoryId
-          ? categoryMap.get(product.categoryId) || "Uncategorized"
-          : "Uncategorized";
-        acc[catName] =
-          (acc[catName] || 0) + Number(product.price) * product.quantity;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    const lowStockCount = Number(lowStockCountResult[0]?.count || 0);
-
-    return {
+    const result = {
       success: true,
-      data: {
-        totalProducts,
-        totalValue,
-        lowStockCount,
-        outOfStockCount,
-        valueByCategory,
-      },
+      data: analyticsData,
     };
+    
+    // Cache the result
+    cache.set(cacheKey, result, cacheTTL.analytics);
+    
+    return result;
   } catch (error) {
     console.error("Error fetching inventory analytics:", error);
     return {
