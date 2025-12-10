@@ -58,20 +58,41 @@ export async function validateTagsAccess(tagIds: string[], userId: string) {
 
 /**
  * Sync product tags (replace all existing with new set)
+ * Optimized to minimize database operations
  */
 export async function mutateProductTags(
   productId: string,
   tagIds: string[],
   tx: Prisma.TransactionClient
 ) {
-  // Delete existing tags and create new ones
-  await tx.productTag.deleteMany({
+  // Get existing tags
+  const existingTags = await tx.productTag.findMany({
     where: { productId },
+    select: { tagId: true },
   });
 
-  if (tagIds.length > 0) {
+  const existingTagIds = new Set(existingTags.map((t) => t.tagId));
+  const newTagIds = new Set(tagIds);
+
+  // Determine what to add and remove
+  const toAdd = tagIds.filter((id) => !existingTagIds.has(id));
+  const toRemove = existingTags
+    .map((t) => t.tagId)
+    .filter((id) => !newTagIds.has(id));
+
+  // Only execute operations if needed
+  if (toRemove.length > 0) {
+    await tx.productTag.deleteMany({
+      where: {
+        productId,
+        tagId: { in: toRemove },
+      },
+    });
+  }
+
+  if (toAdd.length > 0) {
     await tx.productTag.createMany({
-      data: tagIds.map((tagId) => ({
+      data: toAdd.map((tagId) => ({
         productId,
         tagId,
       })),

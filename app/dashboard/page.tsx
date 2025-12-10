@@ -63,35 +63,42 @@ export default async function DashboardPage(props: PageProps) {
   }).length;
 
   // Calculate inventory value trend over the last year (365 days)
-  // For simplicity, we'll show the total value for each day
-  // In a real system, you'd track daily changes
+  // Optimized: sort products once by creation date, then accumulate values
   const days = 365;
   const chartData: { date: string; value: number }[] = [];
   const currentDate = new Date();
 
   // If we have products, calculate value based on creation dates
   if (allProducts.length > 0) {
+    // Sort products by creation date once (O(n log n))
+    const sortedProducts = [...allProducts].sort(
+      (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+    );
+
+    let productIndex = 0;
+    let cumulativeValue = 0;
+
+    // Iterate through each day (O(days))
     for (let i = 0; i < days; i++) {
       const date = new Date(currentDate);
       date.setDate(date.getDate() - (days - i - 1));
       date.setHours(0, 0, 0, 0);
       const dateStr = date.toISOString().split("T")[0];
 
-      // Calculate inventory value up to this date
-      const productsUntilDate = allProducts.filter((p) => {
-        const productDate = new Date(p.createdAt);
-        productDate.setHours(0, 0, 0, 0);
-        return productDate <= date;
-      });
-
-      const value = productsUntilDate.reduce(
-        (sum, p) => sum + Number(p.price) * p.quantity,
-        0
-      );
+      // Add all products created up to this date (O(n) total across all iterations)
+      while (
+        productIndex < sortedProducts.length &&
+        new Date(sortedProducts[productIndex].createdAt).setHours(0, 0, 0, 0) <=
+          date.getTime()
+      ) {
+        const p = sortedProducts[productIndex];
+        cumulativeValue += Number(p.price) * p.quantity;
+        productIndex++;
+      }
 
       chartData.push({
         date: dateStr,
-        value: value,
+        value: cumulativeValue,
       });
     }
   } else {

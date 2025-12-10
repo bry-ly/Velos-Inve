@@ -244,30 +244,48 @@ export async function adjustStock(formData: FormData): Promise<ActionResult> {
 
 /**
  * Get low stock products for the current user
+ * Optimized to use database-level filtering with raw SQL
  */
 export async function getLowStockProducts() {
   try {
     const user = await requireAuthedUser();
 
-    const products = await prisma.product.findMany({
-      where: {
-        userId: user.id,
-        lowStockAt: {
-          not: null,
-        },
-      },
-      orderBy: {
-        quantity: "asc",
-      },
-    });
-
-    const lowStockProducts = products.filter((p) => {
-      return p.lowStockAt !== null && p.quantity <= p.lowStockAt;
-    });
+    // Use raw SQL for efficient column comparison
+    // This pushes the filtering to the database instead of JavaScript
+    const products = await prisma.$queryRaw<
+      Array<{
+        id: string;
+        userId: string;
+        categoryId: string | null;
+        name: string;
+        manufacturer: string;
+        model: string | null;
+        sku: string | null;
+        quantity: number;
+        lowStockAt: number | null;
+        condition: string;
+        location: string | null;
+        price: any;
+        specs: string | null;
+        compatibility: string | null;
+        supplier: string | null;
+        warrantyMonths: number | null;
+        notes: string | null;
+        imageUrl: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+      }>
+    >`
+      SELECT * FROM "Product"
+      WHERE "userId" = ${user.id}
+        AND "lowStockAt" IS NOT NULL
+        AND "quantity" <= "lowStockAt"
+      ORDER BY "quantity" ASC
+    `;
 
     return {
       success: true,
-      data: lowStockProducts,
+      data: products,
     };
   } catch (error) {
     console.error("Error fetching low stock products:", error);
@@ -281,48 +299,78 @@ export async function getLowStockProducts() {
 
 /**
  * Get inventory analytics for the current user
+ * Optimized to use database aggregations and minimize data transfer
  */
 export async function getInventoryAnalytics() {
   try {
     const user = await requireAuthedUser();
 
-    const products = await prisma.product.findMany({
-      where: {
-        userId: user.id,
-      },
-    });
+    // Use parallel queries for better performance
+    const [
+      totalStats,
+      lowStockCount,
+      outOfStockCount,
+      categoryStats,
+      categories,
+    ] = await Promise.all([
+      // Get total products and total value in a single query
+      prisma.$queryRaw<
+        Array<{ totalProducts: bigint; totalValue: any }>
+      >`
+        SELECT 
+          COUNT(*)::bigint as "totalProducts",
+          COALESCE(SUM("price" * "quantity"), 0) as "totalValue"
+        FROM "Product"
+        WHERE "userId" = ${user.id}
+      `,
+      // Get low stock count
+      prisma.$queryRaw<Array<{ count: bigint }>>`
+        SELECT COUNT(*)::bigint as count
+        FROM "Product"
+        WHERE "userId" = ${user.id}
+          AND "lowStockAt" IS NOT NULL
+          AND "quantity" <= "lowStockAt"
+      `,
+      // Get out of stock count
+      prisma.$queryRaw<Array<{ count: bigint }>>`
+        SELECT COUNT(*)::bigint as count
+        FROM "Product"
+        WHERE "userId" = ${user.id}
+          AND "quantity" = 0
+      `,
+      // Get category breakdown with aggregation
+      prisma.$queryRaw<
+        Array<{ categoryId: string | null; totalValue: any }>
+      >`
+        SELECT 
+          "categoryId",
+          COALESCE(SUM("price" * "quantity"), 0) as "totalValue"
+        FROM "Product"
+        WHERE "userId" = ${user.id}
+        GROUP BY "categoryId"
+      `,
+      // Get category names
+      prisma.category.findMany({
+        where: { userId: user.id },
+        select: { id: true, name: true },
+      }),
+    ]);
 
-    const totalProducts = products.length;
-    const totalValue = products.reduce(
-      (sum, product) => sum + Number(product.price) * product.quantity,
-      0
-    );
+    const totalProducts = Number(totalStats[0]?.totalProducts ?? 0);
+    const totalValue = Number(totalStats[0]?.totalValue ?? 0);
+    const lowStock = Number(lowStockCount[0]?.count ?? 0);
+    const outOfStock = Number(outOfStockCount[0]?.count ?? 0);
 
-    const lowStockCount = products.filter((p) => {
-      return p.lowStockAt !== null && p.quantity <= p.lowStockAt;
-    }).length;
-
-    const outOfStockCount = products.filter((p) => p.quantity === 0).length;
-
-    // Group by category
-    const categoryIds = [
-      ...new Set(products.map((p) => p.categoryId).filter(Boolean)),
-    ];
-    const categories = await prisma.category.findMany({
-      where: {
-        id: { in: categoryIds as string[] },
-      },
-    });
-
+    // Create category map for efficient lookup
     const categoryMap = new Map(categories.map((c) => [c.id, c.name]));
 
-    const valueByCategory = products.reduce(
-      (acc, product) => {
-        const catName = product.categoryId
-          ? categoryMap.get(product.categoryId) || "Uncategorized"
+    // Build value by category object
+    const valueByCategory = categoryStats.reduce(
+      (acc, stat) => {
+        const catName = stat.categoryId
+          ? categoryMap.get(stat.categoryId) || "Uncategorized"
           : "Uncategorized";
-        acc[catName] =
-          (acc[catName] || 0) + Number(product.price) * product.quantity;
+        acc[catName] = Number(stat.totalValue);
         return acc;
       },
       {} as Record<string, number>
@@ -333,8 +381,8 @@ export async function getInventoryAnalytics() {
       data: {
         totalProducts,
         totalValue,
-        lowStockCount,
-        outOfStockCount,
+        lowStockCount: lowStock,
+        outOfStockCount: outOfStock,
         valueByCategory,
       },
     };
