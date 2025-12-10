@@ -62,43 +62,62 @@ export default async function DashboardPage(props: PageProps) {
     return new Date(p.createdAt) >= sevenDaysAgo;
   }).length;
 
-  // Calculate inventory value trend over the last year (365 days)
-  // For simplicity, we'll show the total value for each day
-  // In a real system, you'd track daily changes
+  // Calculate inventory value trend - optimized approach
+  // Instead of calculating for every day, we only calculate for dates when products were added
   const days = 365;
   const chartData: { date: string; value: number }[] = [];
   const currentDate = new Date();
-
-  // If we have products, calculate value based on creation dates
+  
   if (allProducts.length > 0) {
-    for (let i = 0; i < days; i++) {
+    // Sort products by creation date for efficient processing
+    const sortedProducts = [...allProducts].sort(
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+
+    // Create a map of dates to cumulative value
+    const dateValueMap = new Map<string, number>();
+    let cumulativeValue = 0;
+
+    // Calculate cumulative value at each product addition date
+    sortedProducts.forEach((p) => {
+      const productDate = new Date(p.createdAt);
+      productDate.setHours(0, 0, 0, 0);
+      const dateStr = productDate.toISOString().split("T")[0];
+      
+      cumulativeValue += Number(p.price) * p.quantity;
+      dateValueMap.set(dateStr, cumulativeValue);
+    });
+
+    // Sample the last 365 days - use weekly intervals for better performance (52 data points instead of 365)
+    const samplingInterval = 7; // Sample every 7 days
+    const dataPoints = Math.ceil(days / samplingInterval);
+    
+    for (let i = 0; i < dataPoints; i++) {
       const date = new Date(currentDate);
-      date.setDate(date.getDate() - (days - i - 1));
+      date.setDate(date.getDate() - (days - i * samplingInterval - 1));
       date.setHours(0, 0, 0, 0);
       const dateStr = date.toISOString().split("T")[0];
 
-      // Calculate inventory value up to this date
-      const productsUntilDate = allProducts.filter((p) => {
-        const productDate = new Date(p.createdAt);
-        productDate.setHours(0, 0, 0, 0);
-        return productDate <= date;
-      });
+      // Find the last known value before or on this date
+      let value = 0;
+      for (const [recordDate, recordValue] of dateValueMap.entries()) {
+        if (recordDate <= dateStr) {
+          value = recordValue;
+        } else {
+          break; // Since dates are sorted, we can break early
+        }
+      }
 
-      const value = productsUntilDate.reduce(
-        (sum, p) => sum + Number(p.price) * p.quantity,
-        0
-      );
-
-      chartData.push({
-        date: dateStr,
-        value: value,
-      });
+      chartData.push({ date: dateStr, value });
     }
   } else {
-    // If no products, return empty data
-    for (let i = 0; i < days; i++) {
+    // If no products, return minimal empty data (weekly intervals)
+    const samplingInterval = 7;
+    const dataPoints = Math.ceil(days / samplingInterval);
+    
+    for (let i = 0; i < dataPoints; i++) {
       const date = new Date(currentDate);
-      date.setDate(date.getDate() - (days - i - 1));
+      date.setDate(date.getDate() - (days - i * samplingInterval - 1));
       chartData.push({
         date: date.toISOString().split("T")[0],
         value: 0,
