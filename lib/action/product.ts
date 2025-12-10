@@ -261,7 +261,11 @@ export async function adjustStock(formData: FormData): Promise<ActionResult> {
  * Optimized: Use database filtering instead of in-memory filtering
  * With caching support
  */
-export async function getLowStockProducts() {
+export async function getLowStockProducts(): Promise<{
+  success: boolean;
+  data?: any[];
+  message?: string;
+}> {
   try {
     const user = await requireAuthedUser();
     
@@ -311,7 +315,17 @@ export async function getLowStockProducts() {
  * Optimized: Use database aggregation instead of fetching all records
  * With caching support
  */
-export async function getInventoryAnalytics() {
+export async function getInventoryAnalytics(): Promise<{
+  success: boolean;
+  data?: {
+    totalProducts: number;
+    totalValue: number;
+    lowStockCount: number;
+    outOfStockCount: number;
+    valueByCategory: Record<string, number>;
+  } | null;
+  message?: string;
+}> {
   try {
     const user = await requireAuthedUser();
     
@@ -450,7 +464,11 @@ export async function getInventoryAnalytics() {
 /**
  * Get all products for the current user
  */
-export async function getProducts() {
+export async function getProducts(): Promise<{
+  success: boolean;
+  data?: any[];
+  message?: string;
+}> {
   try {
     const user = await requireAuthedUser();
 
