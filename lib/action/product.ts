@@ -271,7 +271,11 @@ export async function getLowStockProducts(): Promise<{
     
     // Try to get from cache first
     const cacheKey = cacheKeys.lowStockProducts(user.id);
-    const cached = cache.get(cacheKey);
+    const cached = cache.get<{
+      success: boolean;
+      data?: any[];
+      message?: string;
+    }>(cacheKey);
     if (cached) {
       return cached;
     }
@@ -331,7 +335,17 @@ export async function getInventoryAnalytics(): Promise<{
     
     // Try to get from cache first
     const cacheKey = cacheKeys.analytics(user.id);
-    const cached = cache.get(cacheKey);
+    const cached = cache.get<{
+      success: boolean;
+      data?: {
+        totalProducts: number;
+        totalValue: number;
+        lowStockCount: number;
+        outOfStockCount: number;
+        valueByCategory: Record<string, number>;
+      } | null;
+      message?: string;
+    }>(cacheKey);
     if (cached) {
       return cached;
     }
