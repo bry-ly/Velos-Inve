@@ -55,7 +55,8 @@ type Product = {
   price: number;
   condition: string;
   location: string | null;
-  supplier: string | null;
+  supplierId: string | null;
+  supplierName: string | null;
   warrantyMonths: number | null;
   specs: string | null;
   compatibility: string | null;
@@ -439,14 +440,14 @@ export function CategoryManager({
                                         )}
 
                                         {/* Supplier */}
-                                        {product.supplier && (
+                                        {product.supplierName && (
                                           <div className="flex items-center gap-2">
                                             <IconBuildingStore className="h-4 w-4 text-muted-foreground" />
                                             <span className="text-muted-foreground">
                                               Supplier:
                                             </span>
                                             <span className="font-medium text-foreground">
-                                              {product.supplier}
+                                              {product.supplierName}
                                             </span>
                                           </div>
                                         )}
