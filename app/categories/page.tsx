@@ -48,7 +48,7 @@ export default async function CategoriesPage(props: PageProps) {
             price: true,
             condition: true,
             location: true,
-            supplier: true,
+            supplierId: true,
             warrantyMonths: true,
             specs: true,
             compatibility: true,
@@ -85,7 +85,8 @@ export default async function CategoriesPage(props: PageProps) {
       price: Number(product.price),
       condition: product.condition,
       location: product.location,
-      supplier: product.supplier,
+      supplierId: product.supplierId,
+      supplierName: null,
       warrantyMonths: product.warrantyMonths,
       specs: product.specs,
       compatibility: product.compatibility,
@@ -131,7 +132,7 @@ export default async function CategoriesPage(props: PageProps) {
                 </Badge>
               </div>
             </div>
-            
+
             <CategoryManager
               categories={categorySummaries}
               selectedCategory={
