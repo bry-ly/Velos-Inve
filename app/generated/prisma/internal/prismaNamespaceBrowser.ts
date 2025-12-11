@@ -55,13 +55,22 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
+  Supplier: 'Supplier',
+  Customer: 'Customer',
+  Location: 'Location',
+  ProductStock: 'ProductStock',
   Product: 'Product',
   Category: 'Category',
   Tag: 'Tag',
   ProductTag: 'ProductTag',
-  ActivityLog: 'ActivityLog',
+  StockMovement: 'StockMovement',
+  Batch: 'Batch',
+  PurchaseOrder: 'PurchaseOrder',
+  PurchaseOrderItem: 'PurchaseOrderItem',
+  ReorderRule: 'ReorderRule',
   Sale: 'Sale',
-  SaleItem: 'SaleItem'
+  SaleItem: 'SaleItem',
+  ActivityLog: 'ActivityLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -138,22 +147,81 @@ export const VerificationScalarFieldEnum = {
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
+export const SupplierScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  address: 'address',
+  contactPerson: 'contactPerson',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SupplierScalarFieldEnum = (typeof SupplierScalarFieldEnum)[keyof typeof SupplierScalarFieldEnum]
+
+
+export const CustomerScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  address: 'address',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]
+
+
+export const LocationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  address: 'address',
+  isDefault: 'isDefault',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LocationScalarFieldEnum = (typeof LocationScalarFieldEnum)[keyof typeof LocationScalarFieldEnum]
+
+
+export const ProductStockScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  locationId: 'locationId',
+  quantity: 'quantity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductStockScalarFieldEnum = (typeof ProductStockScalarFieldEnum)[keyof typeof ProductStockScalarFieldEnum]
+
+
 export const ProductScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   categoryId: 'categoryId',
+  supplierId: 'supplierId',
   name: 'name',
   manufacturer: 'manufacturer',
   model: 'model',
   sku: 'sku',
+  barcode: 'barcode',
   quantity: 'quantity',
   lowStockAt: 'lowStockAt',
   condition: 'condition',
   location: 'location',
   price: 'price',
+  costPrice: 'costPrice',
   specs: 'specs',
   compatibility: 'compatibility',
-  supplier: 'supplier',
   warrantyMonths: 'warrantyMonths',
   notes: 'notes',
   imageUrl: 'imageUrl',
@@ -196,24 +264,96 @@ export const ProductTagScalarFieldEnum = {
 export type ProductTagScalarFieldEnum = (typeof ProductTagScalarFieldEnum)[keyof typeof ProductTagScalarFieldEnum]
 
 
-export const ActivityLogScalarFieldEnum = {
+export const StockMovementScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  actorId: 'actorId',
-  entityType: 'entityType',
-  entityId: 'entityId',
-  action: 'action',
-  changes: 'changes',
-  note: 'note',
+  productId: 'productId',
+  locationId: 'locationId',
+  batchId: 'batchId',
+  type: 'type',
+  quantity: 'quantity',
+  reference: 'reference',
+  referenceType: 'referenceType',
+  notes: 'notes',
   createdAt: 'createdAt'
 } as const
 
-export type ActivityLogScalarFieldEnum = (typeof ActivityLogScalarFieldEnum)[keyof typeof ActivityLogScalarFieldEnum]
+export type StockMovementScalarFieldEnum = (typeof StockMovementScalarFieldEnum)[keyof typeof StockMovementScalarFieldEnum]
+
+
+export const BatchScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  productId: 'productId',
+  batchNumber: 'batchNumber',
+  quantity: 'quantity',
+  costPrice: 'costPrice',
+  expiryDate: 'expiryDate',
+  manufacturingDate: 'manufacturingDate',
+  purchaseOrderId: 'purchaseOrderId',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BatchScalarFieldEnum = (typeof BatchScalarFieldEnum)[keyof typeof BatchScalarFieldEnum]
+
+
+export const PurchaseOrderScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  supplierId: 'supplierId',
+  orderNumber: 'orderNumber',
+  status: 'status',
+  orderDate: 'orderDate',
+  expectedDate: 'expectedDate',
+  receivedDate: 'receivedDate',
+  subtotal: 'subtotal',
+  tax: 'tax',
+  shippingCost: 'shippingCost',
+  totalAmount: 'totalAmount',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PurchaseOrderScalarFieldEnum = (typeof PurchaseOrderScalarFieldEnum)[keyof typeof PurchaseOrderScalarFieldEnum]
+
+
+export const PurchaseOrderItemScalarFieldEnum = {
+  id: 'id',
+  purchaseOrderId: 'purchaseOrderId',
+  productId: 'productId',
+  productName: 'productName',
+  sku: 'sku',
+  orderedQuantity: 'orderedQuantity',
+  receivedQuantity: 'receivedQuantity',
+  unitCost: 'unitCost',
+  totalCost: 'totalCost'
+} as const
+
+export type PurchaseOrderItemScalarFieldEnum = (typeof PurchaseOrderItemScalarFieldEnum)[keyof typeof PurchaseOrderItemScalarFieldEnum]
+
+
+export const ReorderRuleScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  productId: 'productId',
+  reorderPoint: 'reorderPoint',
+  reorderQuantity: 'reorderQuantity',
+  supplierId: 'supplierId',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ReorderRuleScalarFieldEnum = (typeof ReorderRuleScalarFieldEnum)[keyof typeof ReorderRuleScalarFieldEnum]
 
 
 export const SaleScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  customerId: 'customerId',
   invoiceNumber: 'invoiceNumber',
   customer: 'customer',
   subtotal: 'subtotal',
@@ -235,14 +375,31 @@ export const SaleItemScalarFieldEnum = {
   saleId: 'saleId',
   productId: 'productId',
   productName: 'productName',
+  sku: 'sku',
   quantity: 'quantity',
   unitPrice: 'unitPrice',
+  costPrice: 'costPrice',
   discount: 'discount',
   subtotal: 'subtotal',
   totalPrice: 'totalPrice'
 } as const
 
 export type SaleItemScalarFieldEnum = (typeof SaleItemScalarFieldEnum)[keyof typeof SaleItemScalarFieldEnum]
+
+
+export const ActivityLogScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  actorId: 'actorId',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  action: 'action',
+  changes: 'changes',
+  note: 'note',
+  createdAt: 'createdAt'
+} as const
+
+export type ActivityLogScalarFieldEnum = (typeof ActivityLogScalarFieldEnum)[keyof typeof ActivityLogScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -60,6 +60,26 @@ export type Account = Prisma.AccountModel
  */
 export type Verification = Prisma.VerificationModel
 /**
+ * Model Supplier
+ * 
+ */
+export type Supplier = Prisma.SupplierModel
+/**
+ * Model Customer
+ * 
+ */
+export type Customer = Prisma.CustomerModel
+/**
+ * Model Location
+ * 
+ */
+export type Location = Prisma.LocationModel
+/**
+ * Model ProductStock
+ * 
+ */
+export type ProductStock = Prisma.ProductStockModel
+/**
  * Model Product
  * 
  */
@@ -80,10 +100,30 @@ export type Tag = Prisma.TagModel
  */
 export type ProductTag = Prisma.ProductTagModel
 /**
- * Model ActivityLog
+ * Model StockMovement
  * 
  */
-export type ActivityLog = Prisma.ActivityLogModel
+export type StockMovement = Prisma.StockMovementModel
+/**
+ * Model Batch
+ * 
+ */
+export type Batch = Prisma.BatchModel
+/**
+ * Model PurchaseOrder
+ * 
+ */
+export type PurchaseOrder = Prisma.PurchaseOrderModel
+/**
+ * Model PurchaseOrderItem
+ * 
+ */
+export type PurchaseOrderItem = Prisma.PurchaseOrderItemModel
+/**
+ * Model ReorderRule
+ * 
+ */
+export type ReorderRule = Prisma.ReorderRuleModel
 /**
  * Model Sale
  * 
@@ -94,3 +134,8 @@ export type Sale = Prisma.SaleModel
  * 
  */
 export type SaleItem = Prisma.SaleItemModel
+/**
+ * Model ActivityLog
+ * 
+ */
+export type ActivityLog = Prisma.ActivityLogModel
