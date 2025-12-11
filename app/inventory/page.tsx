@@ -43,6 +43,7 @@ export default async function InventoryPage(props: PageProps) {
       orderBy: { createdAt: "desc" },
       include: {
         category: true,
+        supplier: true,
         tags: {
           include: {
             tag: true,
@@ -81,7 +82,8 @@ export default async function InventoryPage(props: PageProps) {
     price: Number(p.price),
     quantity: p.quantity,
     lowStockAt: p.lowStockAt,
-    supplier: p.supplier,
+    supplierId: p.supplierId,
+    supplierName: p.supplier?.name ?? null,
     imageUrl: p.imageUrl,
     warrantyMonths: p.warrantyMonths,
     location: p.location,

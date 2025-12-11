@@ -39,7 +39,7 @@ export default async function ProductPage(props: PageProps) {
 
   const product = await prisma.product.findUnique({
     where: { id: params.id },
-    include: { category: true },
+    include: { category: true, supplier: true },
   });
 
   if (!product) {
@@ -193,7 +193,7 @@ export default async function ProductPage(props: PageProps) {
                       <span className="text-sm font-medium text-muted-foreground">
                         Supplier
                       </span>
-                      <p>{product.supplier || "—"}</p>
+                      <p>{product.supplier?.name || "—"}</p>
                     </div>
                     <div>
                       <span className="text-sm font-medium text-muted-foreground">
