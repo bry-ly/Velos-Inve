@@ -40,7 +40,7 @@
   --font-serif: Source Serif 4, serif;
   --font-mono: IBM Plex Mono, monospace;
 
-  --radius: 1.75rem;
+  --radius: 0.575rem;
   
   --shadow-2xs: 0 1px 3px 0px oklch(0.00 0 0 / 0.05);
   --shadow-xs: 0 1px 3px 0px oklch(0.00 0 0 / 0.05);
