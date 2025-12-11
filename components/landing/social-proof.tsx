@@ -1,5 +1,6 @@
 import { InfiniteSlider } from "@/components/ui/infinite-slider";
 import { ProgressiveBlur } from "@/components/ui/progressive-blur";
+import Image from "next/image";
 
 const metrics = [
   {
@@ -53,75 +54,83 @@ export default function SocialProof() {
             <div className="relative w-full overflow-hidden">
               <InfiniteSlider speedOnHover={20} speed={40} gap={40}>
                 <div className="flex">
-                  <img
-                    className="mx-auto h-5 w-fit dark:invert"
+                  <Image
+                    className="mx-auto h-5 w-auto dark:invert"
                     src="https://html.tailus.io/blocks/customers/nvidia.svg"
                     alt="Nvidia Logo"
-                    height="20"
-                    width="auto"
+                    width={0}
+                    height={0}
+                    style={{ width: "auto", height: "20px" }}
                   />
                 </div>
                 <div className="flex">
-                  <img
-                    className="mx-auto h-4 w-fit dark:invert"
+                  <Image
+                    className="mx-auto h-4 w-auto dark:invert"
                     src="https://html.tailus.io/blocks/customers/column.svg"
                     alt="Column Logo"
-                    height="16"
-                    width="auto"
+                    width={0}
+                    height={0}
+                    style={{ width: "auto", height: "16px" }}
                   />
                 </div>
                 <div className="flex">
-                  <img
-                    className="mx-auto h-4 w-fit dark:invert"
+                  <Image
+                    className="mx-auto h-4 w-auto dark:invert"
                     src="https://html.tailus.io/blocks/customers/github.svg"
                     alt="GitHub Logo"
-                    height="16"
-                    width="auto"
+                    width={0}
+                    height={0}
+                    style={{ width: "auto", height: "16px" }}
                   />
                 </div>
                 <div className="flex">
-                  <img
-                    className="mx-auto h-5 w-fit dark:invert"
+                  <Image
+                    className="mx-auto h-5 w-auto dark:invert"
                     src="https://html.tailus.io/blocks/customers/nike.svg"
                     alt="Nike Logo"
-                    height="20"
-                    width="auto"
+                    width={0}
+                    height={0}
+                    style={{ width: "auto", height: "20px" }}
                   />
                 </div>
                 <div className="flex">
-                  <img
-                    className="mx-auto h-5 w-fit dark:invert"
+                  <Image
+                    className="mx-auto h-5 w-auto dark:invert"
                     src="https://html.tailus.io/blocks/customers/lemonsqueezy.svg"
                     alt="Lemon Squeezy Logo"
-                    height="20"
-                    width="auto"
+                    width={0}
+                    height={0}
+                    style={{ width: "auto", height: "20px" }}
                   />
                 </div>
                 <div className="flex">
-                  <img
-                    className="mx-auto h-4 w-fit dark:invert"
+                  <Image
+                    className="mx-auto h-4 w-auto dark:invert"
                     src="https://html.tailus.io/blocks/customers/laravel.svg"
                     alt="Laravel Logo"
-                    height="16"
-                    width="auto"
+                    width={0}
+                    height={0}
+                    style={{ width: "auto", height: "16px" }}
                   />
                 </div>
                 <div className="flex">
-                  <img
-                    className="mx-auto h-7 w-fit dark:invert"
+                  <Image
+                    className="mx-auto h-7 w-auto dark:invert"
                     src="https://html.tailus.io/blocks/customers/lilly.svg"
                     alt="Lilly Logo"
-                    height="28"
-                    width="auto"
+                    width={0}
+                    height={0}
+                    style={{ width: "auto", height: "28px" }}
                   />
                 </div>
                 <div className="flex">
-                  <img
-                    className="mx-auto h-6 w-fit dark:invert"
+                  <Image
+                    className="mx-auto h-6 w-auto dark:invert"
                     src="https://html.tailus.io/blocks/customers/openai.svg"
                     alt="OpenAI Logo"
-                    height="24"
-                    width="auto"
+                    width={0}
+                    height={0}
+                    style={{ width: "auto", height: "24px" }}
                   />
                 </div>
               </InfiniteSlider>
