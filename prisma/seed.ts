@@ -535,7 +535,7 @@ async function main() {
         price: part.price,
         specs: part.specs || null,
         compatibility: part.compatibility || null,
-        supplier: part.supplier || null,
+        // supplier is now a relation, products can be linked to suppliers after creation
         warrantyMonths: part.warrantyMonths || null,
         notes: part.notes || null,
       },

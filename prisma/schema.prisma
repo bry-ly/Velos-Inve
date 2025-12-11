@@ -7,21 +7,40 @@ datasource db {
   provider = "postgresql"
 }
 
+// =====================
+// AUTHENTICATION MODELS
+// =====================
+
 model User {
-  id            String        @id
+  id            String   @id
   name          String
-  email         String        @unique
-  emailVerified Boolean       @default(false)
+  email         String   @unique
+  emailVerified Boolean  @default(false)
   image         String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @default(now()) @updatedAt
-  accounts      Account[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+
+  // Auth relations
+  accounts Account[]
+  sessions Session[]
+
+  // Activity relations
   actedActivity ActivityLog[] @relation("ActivityActor")
   ownedActivity ActivityLog[] @relation("ActivityOwner")
-  sales         Sale[]
-  categories    Category[]
-  sessions      Session[]
-  tags          Tag[]
+
+  // Inventory relations
+  categories Category[]
+  tags       Tag[]
+  sales      Sale[]
+
+  // NEW: Extended inventory relations
+  suppliers      Supplier[]
+  customers      Customer[]
+  locations      Location[]
+  stockMovements StockMovement[]
+  batches        Batch[]
+  purchaseOrders PurchaseOrder[]
+  reorderRules   ReorderRule[]
 
   @@map("user")
 }
@@ -70,34 +89,135 @@ model Verification {
   @@map("verification")
 }
 
+// =====================
+// SUPPLIER & CUSTOMER MANAGEMENT
+// =====================
+
+model Supplier {
+  id            String   @id @default(cuid())
+  userId        String
+  name          String
+  email         String?
+  phone         String?
+  address       String?
+  contactPerson String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products       Product[]
+  purchaseOrders PurchaseOrder[]
+  reorderRules   ReorderRule[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("supplier")
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  email     String?
+  phone     String?
+  address   String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sales Sale[]
+
+  @@unique([userId, email])
+  @@index([userId])
+  @@map("customer")
+}
+
+// =====================
+// LOCATION / WAREHOUSE MANAGEMENT
+// =====================
+
+model Location {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  address   String?
+  isDefault Boolean  @default(false)
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productStocks  ProductStock[]
+  stockMovements StockMovement[]
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("location")
+}
+
+model ProductStock {
+  id         String   @id @default(cuid())
+  productId  String
+  locationId String
+  quantity   Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, locationId])
+  @@index([productId])
+  @@index([locationId])
+  @@map("product_stock")
+}
+
+// =====================
+// PRODUCT & INVENTORY
+// =====================
+
 model Product {
-  id             String       @id @default(cuid())
+  id             String   @id @default(cuid())
   userId         String
   categoryId     String?
+  supplierId     String?
   name           String
   manufacturer   String
   model          String?
-  sku            String?      @unique
-  quantity       Int          @default(0)
+  sku            String?  @unique
+  barcode        String?  @unique
+  quantity       Int      @default(0)
   lowStockAt     Int?
-  condition      String       @default("new")
+  condition      String   @default("new")
   location       String?
-  price          Decimal      @db.Decimal(12, 2)
+  price          Decimal  @db.Decimal(12, 2)
+  costPrice      Decimal? @db.Decimal(12, 2)
   specs          String?
   compatibility  String?
-  supplier       String?
   warrantyMonths Int?
   notes          String?
   imageUrl       String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  category       Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  tags           ProductTag[]
-  saleItems      SaleItem[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  category           Category?           @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  supplier           Supplier?           @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  tags               ProductTag[]
+  saleItems          SaleItem[]
+  productStocks      ProductStock[]
+  stockMovements     StockMovement[]
+  batches            Batch[]
+  purchaseOrderItems PurchaseOrderItem[]
+  reorderRule        ReorderRule?
 
   @@index([userId, categoryId])
   @@index([manufacturer])
   @@index([createdAt])
+  @@index([supplierId])
+  @@index([barcode])
 }
 
 model Category {
@@ -140,6 +260,196 @@ model ProductTag {
   @@map("product_tag")
 }
 
+// =====================
+// STOCK MOVEMENT & HISTORY
+// =====================
+
+model StockMovement {
+  id            String   @id @default(cuid())
+  userId        String
+  productId     String
+  locationId    String?
+  batchId       String?
+  type          String // 'in' | 'out' | 'adjustment' | 'transfer'
+  quantity      Int // positive for in, negative for out
+  reference     String? // PO number, Sale ID, etc.
+  referenceType String? // 'purchase_order' | 'sale' | 'adjustment' | 'transfer'
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product  Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  location Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  batch    Batch?    @relation(fields: [batchId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([productId])
+  @@index([locationId])
+  @@index([referenceType, reference])
+  @@map("stock_movement")
+}
+
+// =====================
+// BATCH / LOT TRACKING
+// =====================
+
+model Batch {
+  id                String    @id @default(cuid())
+  userId            String
+  productId         String
+  batchNumber       String
+  quantity          Int       @default(0)
+  costPrice         Decimal?  @db.Decimal(12, 2)
+  expiryDate        DateTime?
+  manufacturingDate DateTime?
+  purchaseOrderId   String?
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product        Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  purchaseOrder  PurchaseOrder?  @relation(fields: [purchaseOrderId], references: [id], onDelete: SetNull)
+  stockMovements StockMovement[]
+
+  @@unique([userId, productId, batchNumber])
+  @@index([userId])
+  @@index([productId])
+  @@index([expiryDate])
+  @@map("batch")
+}
+
+// =====================
+// PURCHASE ORDERS
+// =====================
+
+model PurchaseOrder {
+  id           String    @id @default(cuid())
+  userId       String
+  supplierId   String
+  orderNumber  String    @unique
+  status       String    @default("draft") // draft, ordered, partial, received, cancelled
+  orderDate    DateTime  @default(now())
+  expectedDate DateTime?
+  receivedDate DateTime?
+  subtotal     Decimal   @db.Decimal(12, 2)
+  tax          Decimal   @default(0) @db.Decimal(12, 2)
+  shippingCost Decimal   @default(0) @db.Decimal(12, 2)
+  totalAmount  Decimal   @db.Decimal(12, 2)
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user     User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  supplier Supplier            @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  items    PurchaseOrderItem[]
+  batches  Batch[]
+
+  @@index([userId, createdAt])
+  @@index([supplierId])
+  @@index([status])
+  @@index([orderNumber])
+  @@map("purchase_order")
+}
+
+model PurchaseOrderItem {
+  id               String  @id @default(cuid())
+  purchaseOrderId  String
+  productId        String?
+  productName      String
+  sku              String?
+  orderedQuantity  Int
+  receivedQuantity Int     @default(0)
+  unitCost         Decimal @db.Decimal(12, 2)
+  totalCost        Decimal @db.Decimal(12, 2)
+
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  product       Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([purchaseOrderId])
+  @@index([productId])
+  @@map("purchase_order_item")
+}
+
+// =====================
+// REORDER AUTOMATION
+// =====================
+
+model ReorderRule {
+  id              String   @id @default(cuid())
+  userId          String
+  productId       String   @unique
+  reorderPoint    Int // Trigger when stock falls below
+  reorderQuantity Int // Suggested order quantity
+  supplierId      String? // Preferred supplier
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product  Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  supplier Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([supplierId])
+  @@map("reorder_rule")
+}
+
+// =====================
+// SALES & TRANSACTIONS
+// =====================
+
+model Sale {
+  id            String   @id @default(cuid())
+  userId        String
+  customerId    String?
+  invoiceNumber String   @unique
+  customer      String? // Keep for backward compatibility (walk-in customer name)
+  subtotal      Decimal  @db.Decimal(12, 2)
+  discount      Decimal  @default(0) @db.Decimal(12, 2)
+  tax           Decimal  @default(0) @db.Decimal(12, 2)
+  totalAmount   Decimal  @db.Decimal(12, 2)
+  status        String   @default("completed") // completed, refunded, pending
+  paymentMethod String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  items          SaleItem[]
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customerRecord Customer?  @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([invoiceNumber])
+  @@index([customerId])
+  @@map("sale")
+}
+
+model SaleItem {
+  id          String  @id @default(cuid())
+  saleId      String
+  productId   String?
+  productName String
+  sku         String?
+  quantity    Int
+  unitPrice   Decimal @db.Decimal(12, 2)
+  costPrice   Decimal @default(0) @db.Decimal(12, 2) // For profit calculation
+  discount    Decimal @default(0) @db.Decimal(12, 2)
+  subtotal    Decimal @db.Decimal(12, 2)
+  totalPrice  Decimal @db.Decimal(12, 2)
+
+  sale    Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([saleId])
+  @@index([productId])
+  @@map("sale_item")
+}
+
+// =====================
+// ACTIVITY LOGGING
+// =====================
+
 model ActivityLog {
   id         String   @id @default(cuid())
   userId     String
@@ -156,45 +466,4 @@ model ActivityLog {
   @@index([userId, createdAt])
   @@index([entityType, entityId])
   @@map("activity_log")
-}
-
-model Sale {
-  id            String   @id @default(cuid())
-  userId        String
-  invoiceNumber String   @unique // Unique invoice/receipt number
-  customer      String?
-  subtotal      Decimal  @db.Decimal(12, 2) // Before tax and discount
-  discount      Decimal  @default(0) @db.Decimal(12, 2) // Overall sale discount
-  tax           Decimal  @default(0) @db.Decimal(12, 2) // Tax amount
-  totalAmount   Decimal  @db.Decimal(12, 2) // Final amount after tax and discount
-  status        String   @default("completed") // completed, refunded
-  paymentMethod String?
-  notes         String? // Sale notes
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  items SaleItem[]
-  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, createdAt])
-  @@index([invoiceNumber])
-  @@map("sale")
-}
-
-model SaleItem {
-  id          String  @id @default(cuid())
-  saleId      String
-  productId   String? // Optional because product might be deleted later
-  productName String // Snapshot of product name at time of sale
-  quantity    Int
-  unitPrice   Decimal @db.Decimal(12, 2) // Price per unit
-  discount    Decimal @default(0) @db.Decimal(12, 2) // Discount per item
-  subtotal    Decimal @db.Decimal(12, 2) // unitPrice * quantity
-  totalPrice  Decimal @db.Decimal(12, 2) // subtotal - discount
-
-  sale    Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
-  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
-
-  @@index([saleId])
-  @@map("sale_item")
 }
