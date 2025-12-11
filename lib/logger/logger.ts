@@ -1,16 +1,33 @@
 import { prisma } from "@/lib/prisma/prisma";
 import { Prisma } from "../../app/generated/prisma/client";
 
-type ActivityType = "create" | "update" | "delete" | "stock_adjustment";
-type EntityType = "product" | "tag" | "category" | "sale";
+type ActivityType =
+  | "create"
+  | "update"
+  | "delete"
+  | "stock_adjustment"
+  | "receive"
+  | "transfer";
+type EntityType =
+  | "product"
+  | "tag"
+  | "category"
+  | "sale"
+  | "supplier"
+  | "customer"
+  | "location"
+  | "purchase_order"
+  | "batch"
+  | "stock_movement"
+  | "reorder_rule";
 
 interface LogActivityParams {
   userId: string;
-  actorId: string;
+  actorId?: string; // Optional, defaults to userId
   entityType: EntityType;
-  entityId: string;
+  entityId?: string; // Optional for cases where entity doesn't exist yet
   action: ActivityType;
-  changes?: Prisma.JsonObject;
+  changes?: Record<string, unknown>;
   note?: string;
 }
 
