@@ -262,7 +262,7 @@ export function SignupForm({
                   </FieldDescription>
                 )}
                 <FieldDescription className="text-center">
-                  Already have an account? <Link href="/sign-in">Sign in</Link>
+                  Already have an account? <Link href="/auth/sign-in">Sign in</Link>
                 </FieldDescription>
               </div>
             </form>
