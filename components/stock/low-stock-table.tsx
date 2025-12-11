@@ -56,7 +56,7 @@ export function LowStockTable({ products }: LowStockTableProps) {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm">{product.supplier || "—"}</span>
+                    <span className="text-sm">{product.supplierName || "—"}</span>
                   </TableCell>
                 </TableRow>
               ))
