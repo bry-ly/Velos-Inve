@@ -48,7 +48,7 @@ export function NavUser({
         return;
       }
       toast.success("Signed out successfully.");
-      router.push("auth/sign-in");
+      router.push("/auth/sign-in");
       router.refresh();
     } catch (err) {
       const errorMessage =
