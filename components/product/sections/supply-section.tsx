@@ -33,15 +33,15 @@ export function SupplySection({ form }: SupplySectionProps) {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <FormField
+        <FormField
             control={form.control}
-            name="supplier"
+            name="supplierId"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Supplier/vendor</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Preferred supplier (optional)"
+                    placeholder="Supplier ID (optional)"
                     {...field}
                     value={field.value || ""}
                   />
