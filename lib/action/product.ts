@@ -19,9 +19,7 @@ import {
 /**
  * Create a new product
  */
-export async function createProduct(
-  formData: FormData
-): Promise<ActionResult> {
+export async function createProduct(formData: FormData): Promise<ActionResult> {
   try {
     const user = await requireAuthedUser();
 
@@ -66,9 +64,7 @@ export async function createProduct(
 /**
  * Update an existing product
  */
-export async function updateProduct(
-  formData: FormData
-): Promise<ActionResult> {
+export async function updateProduct(formData: FormData): Promise<ActionResult> {
   try {
     const user = await requireAuthedUser();
 
@@ -134,9 +130,7 @@ export async function updateProduct(
 /**
  * Delete a product
  */
-export async function deleteProduct(
-  formData: FormData
-): Promise<ActionResult> {
+export async function deleteProduct(formData: FormData): Promise<ActionResult> {
   try {
     const user = await requireAuthedUser();
 
@@ -269,7 +263,7 @@ export async function getLowStockProducts() {
         price: Prisma.Decimal;
         specs: string | null;
         compatibility: string | null;
-        supplier: string | null;
+        supplierId: string | null;
         warrantyMonths: number | null;
         notes: string | null;
         imageUrl: string | null;
@@ -376,16 +370,13 @@ export async function getInventoryAnalytics() {
     const categoryMap = new Map(categories.map((c) => [c.id, c.name]));
 
     // Build value by category object
-    const valueByCategory = categoryStats.reduce(
-      (acc, stat) => {
-        const catName = stat.categoryId
-          ? categoryMap.get(stat.categoryId) || "Uncategorized"
-          : "Uncategorized";
-        acc[catName] = Number(stat.totalValue);
-        return acc;
-      },
-      {} as Record<string, number>
-    );
+    const valueByCategory = categoryStats.reduce((acc, stat) => {
+      const catName = stat.categoryId
+        ? categoryMap.get(stat.categoryId) || "Uncategorized"
+        : "Uncategorized";
+      acc[catName] = Number(stat.totalValue);
+      return acc;
+    }, {} as Record<string, number>);
 
     return {
       success: true,
