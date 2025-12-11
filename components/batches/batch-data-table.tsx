@@ -74,8 +74,8 @@ interface BatchDataTableProps {
 export function BatchDataTable({ batches, products }: BatchDataTableProps) {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [productFilter, setProductFilter] = React.useState("");
-  const [expiryFilter, setExpiryFilter] = React.useState("");
+  const [productFilter, setProductFilter] = React.useState("all");
+  const [expiryFilter, setExpiryFilter] = React.useState("all");
   const [deleteId, setDeleteId] = React.useState<string | null>(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
 
@@ -92,7 +92,7 @@ export function BatchDataTable({ batches, products }: BatchDataTableProps) {
       );
     }
 
-    if (productFilter) {
+    if (productFilter && productFilter !== "all") {
       filtered = filtered.filter((b) => b.productId === productFilter);
     }
 
@@ -258,7 +258,7 @@ export function BatchDataTable({ batches, products }: BatchDataTableProps) {
               <SelectValue placeholder="All Products" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Products</SelectItem>
+              <SelectItem value="all">All Products</SelectItem>
               {products.map((p) => (
                 <SelectItem key={p.id} value={p.id}>
                   {p.name}
@@ -271,7 +271,7 @@ export function BatchDataTable({ batches, products }: BatchDataTableProps) {
               <SelectValue placeholder="All Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Status</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="expired">Expired</SelectItem>
               <SelectItem value="expiring_soon">Expiring Soon</SelectItem>
               <SelectItem value="no_expiry">No Expiry</SelectItem>
