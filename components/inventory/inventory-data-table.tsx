@@ -748,7 +748,7 @@ export function InventoryDataTable({
                 warrantyMonths: editProduct.warrantyMonths ?? undefined,
                 notes: editProduct.notes ?? "",
                 compatibility: editProduct.compatibility ?? "",
-                supplier: editProduct.supplier ?? "",
+                supplierId: editProduct.supplierId ?? "",
                 specs: editProduct.specs ?? "",
                 imageUrl: editProduct.imageUrl ?? "",
                 tagIds: editProduct.tags?.map((t) => t.id) ?? [],
