@@ -60,7 +60,7 @@ export function ProductForm({
       price: 0,
       specs: "",
       compatibility: "",
-      supplier: "",
+      supplierId: "",
       warrantyMonths: undefined,
       notes: "",
       imageUrl: "",
