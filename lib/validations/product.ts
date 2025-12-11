@@ -16,7 +16,6 @@ const emptyStringToUndefined = z
     return val.trim();
   });
 
-
 /**
  * Client-side schema for react-hook-form
  */
@@ -52,10 +51,7 @@ export const ProductFormSchema = z.object({
     .nonnegative("Low stock threshold must be 0 or greater")
     .optional(),
 
-  supplier: z
-    .string()
-    .max(100, "Supplier must be 100 characters or fewer")
-    .optional(),
+  supplierId: z.string().optional(),
 
   imageUrl: z
     .string()
@@ -154,10 +150,7 @@ export const ProductSchema = z.object({
     .optional()
     .or(z.literal("").transform(() => undefined)),
 
-  supplier: emptyStringToUndefined.refine(
-    (val) => !val || val.length <= 100,
-    "Supplier must be 100 characters or fewer"
-  ),
+  supplierId: emptyStringToUndefined,
 
   imageUrl: z
     .string()
