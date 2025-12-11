@@ -2,12 +2,14 @@
 import type * as React from "react";
 import {
   IconDashboard,
-  IconHelp,
   IconShoppingCart,
   IconSettings,
   IconPackages,
   IconTrendingUp,
   IconChartBar,
+  IconTruckDelivery,
+  IconUsers,
+  IconBuildingWarehouse,
 } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/layout/nav-main";
@@ -34,7 +36,7 @@ const data = {
     },
     {
       title: "Products / Inventory",
-      url: "#",
+      url: "/inventory",
       icon: IconShoppingCart,
       items: [
         {
@@ -57,7 +59,7 @@ const data = {
     },
     {
       title: "Stock Management",
-      url: "#",
+      url: "/stock/adjustment",
       icon: IconPackages,
       items: [
         {
@@ -68,22 +70,69 @@ const data = {
           title: "Low Stock Alerts",
           url: "/stock/alerts",
         },
+        {
+          title: "Batch Tracking",
+          url: "/batches",
+        },
+        {
+          title: "Locations",
+          url: "/locations",
+        },
+        {
+          title: "Stock Transfer",
+          url: "/stock/transfer",
+        },
+        {
+          title: "Stock History",
+          url: "/stock/history",
+        },
+      ],
+    },
+    {
+      title: "Purchasing",
+      url: "/purchase-orders",
+      icon: IconTruckDelivery,
+      items: [
+        {
+          title: "Purchase Orders",
+          url: "/purchase-orders",
+        },
+        {
+          title: "Create PO",
+          url: "/purchase-orders/create",
+        },
+        {
+          title: "Suppliers",
+          url: "/suppliers",
+        },
       ],
     },
     {
       title: "Sales / Outbound",
-      url: "#",
+      url: "/sales/create",
       icon: IconTrendingUp,
       items: [
         {
           title: "Create Sale",
           url: "/sales/create",
         },
+        {
+          title: "Sales History",
+          url: "/sales/history",
+        },
+        {
+          title: "Returns",
+          url: "/sales/returns",
+        },
+        {
+          title: "Customers",
+          url: "/customers",
+        },
       ],
     },
     {
       title: "Reports",
-      url: "#",
+      url: "/reports/inventory",
       icon: IconChartBar,
       items: [
         {
@@ -93,6 +142,10 @@ const data = {
         {
           title: "Sales Report",
           url: "/reports/sales",
+        },
+        {
+          title: "Profit & Loss",
+          url: "/reports/profit-loss",
         },
         {
           title: "Activity Log",
@@ -120,7 +173,7 @@ export function AppSidebar({
   ...props
 }: AppSidebarProps & React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -128,7 +181,7 @@ export function AppSidebar({
               asChild
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
-              <Link href="/dashboard">
+              <Link href="/dashboard" prefetch={true}>
                 <Image
                   src="/icon.png"
                   alt="Logo"
@@ -136,9 +189,7 @@ export function AppSidebar({
                   height={20}
                   className="size-5!"
                 />
-                <span className="text-base font-semibold">
-                  Dashboard
-                </span>
+                <span className="text-base font-semibold">Dashboard</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

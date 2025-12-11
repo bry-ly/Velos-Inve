@@ -25,6 +25,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   Dialog,
@@ -129,16 +130,31 @@ export function NavMain({
           )}
 
           {items.map((item) => {
-            if (!item.items || item.items.length === 0) {
+            // Check if this is the currently active page or one of its children
+            const isChildActive = item.items?.some(
+              (subItem) => subItem.url === pathname
+            );
+            const isMainActive = pathname === item.url;
+            const isActive = isMainActive || isChildActive;
+
+            // If text is hidden (collapsed) and we have items, we want to treat it as a link (if url exists)
+            // standard behavior for collapsed sidebar with submenus is to show a popover
+            // BUT the user specifically requested: "when i click the icon it go to the pages"
+            // So we override the collapsible behavior when collapsed.
+            const { state } = useSidebar();
+            const isCollapsed = state === "collapsed";
+
+            if (!item.items || item.items.length === 0 || isCollapsed) {
               return (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
                     tooltip={item.title}
-                    isActive={pathname === item.url}
+                    isActive={isActive}
                   >
                     <Link
                       href={item.url}
+                      prefetch={true}
                       onClick={(e) => onLinkClick?.(e, item.url)}
                     >
                       {item.icon && <item.icon />}
@@ -160,7 +176,7 @@ export function NavMain({
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton tooltip={item.title}>
+                    <SidebarMenuButton tooltip={item.title} isActive={isActive}>
                       {item.icon && <item.icon />}
                       <span className="truncate">{item.title}</span>
                       <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -181,6 +197,7 @@ export function NavMain({
                           >
                             <Link
                               href={subItem.url}
+                              prefetch={true}
                               onClick={(e) => onLinkClick?.(e, subItem.url)}
                             >
                               <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground" />
