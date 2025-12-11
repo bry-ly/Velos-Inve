@@ -1,7 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import "dotenv/config";
+import { PrismaClient } from "../app/generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+});
 
 const prisma = new PrismaClient({
-  log: ["query", "error", "warn"],
+  adapter,
 });
 
 const HARDWARE_PARTS = [
@@ -33,7 +39,8 @@ const HARDWARE_PARTS = [
     condition: "new",
     location: "Aisle 1, Shelf C",
     price: 589.99,
-    specs: "24 cores (8P+16E), 32 threads, 3.0GHz base, 5.8GHz boost, LGA1700 socket",
+    specs:
+      "24 cores (8P+16E), 32 threads, 3.0GHz base, 5.8GHz boost, LGA1700 socket",
     compatibility: "Intel 600/700 series motherboards, DDR4/DDR5",
     supplier: "Intel Corporation",
     warrantyMonths: 36,
@@ -488,7 +495,9 @@ async function main() {
         continue;
       } else {
         // SKU exists but belongs to another user, create with modified SKU
-        console.log(`⚠️  SKU ${productSku} exists for another user, creating with modified SKU`);
+        console.log(
+          `⚠️  SKU ${productSku} exists for another user, creating with modified SKU`
+        );
         productSku = `${productSku}-${user.id.slice(0, 8)}`;
       }
     }
@@ -551,4 +560,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-
