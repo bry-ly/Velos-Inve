@@ -75,12 +75,12 @@ export const HeroHeader = () => {
                 size="sm"
                 className="hidden lg:inline-flex"
               >
-                <Link href="/sign-in">
+                <Link href="auth/sign-in">
                   <span className="font-mono uppercase">Login</span>
                 </Link>
               </Button>
               <Button asChild size="sm" className="hidden lg:inline-flex">
-                <Link href="/sign-up">
+                <Link href="auth/sign-up">
                   <span className="font-mono uppercase">Sign Up</span>
                 </Link>
               </Button>
