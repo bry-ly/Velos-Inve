@@ -41,7 +41,7 @@ export function useInventoryExport(items: Product[]) {
           item.lowStockAt || "",
           Number(item.price).toFixed(2),
           `"${item.location || ""}"`,
-          `"${item.supplier || ""}"`,
+          `"${item.supplierName || ""}"`,
           item.warrantyMonths || "",
           `"${item.tags?.map((t) => t.name).join(", ") || ""}"`,
         ].join(",")
@@ -95,7 +95,7 @@ export function useInventoryExport(items: Product[]) {
       item.lowStockAt || "",
       Number(item.price),
       item.location || "",
-      item.supplier || "",
+      item.supplierName || "",
       item.warrantyMonths || "",
       item.compatibility || "",
       item.notes || "",

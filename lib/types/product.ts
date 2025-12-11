@@ -15,7 +15,8 @@ export interface Product {
   price: string | number;
   quantity: number;
   lowStockAt?: number | null;
-  supplier?: string | null;
+  supplierId?: string | null;
+  supplierName?: string | null;
   imageUrl?: string | null;
   warrantyMonths?: number | null;
   location?: string | null;
@@ -50,7 +51,7 @@ export interface ProductFormData {
   price: string;
   specs: string;
   compatibility: string;
-  supplier: string;
+  supplierId: string;
   warrantyMonths: string;
   notes: string;
   imageUrl: string;

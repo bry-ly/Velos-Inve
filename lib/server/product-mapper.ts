@@ -32,7 +32,7 @@ export function extractProductFromFormData(formData: FormData) {
     price: formData.get("price"),
     specs: formData.get("specs") || undefined,
     compatibility: formData.get("compatibility") || undefined,
-    supplier: formData.get("supplier") || undefined,
+    supplierId: formData.get("supplierId") || undefined,
     warrantyMonths: formData.get("warrantyMonths") || undefined,
     notes: formData.get("notes") || undefined,
     imageUrl,
