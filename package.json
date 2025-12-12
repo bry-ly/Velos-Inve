@@ -7,7 +7,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate && npm install --legacy-peer-deps",
+    "postinstall": "prisma generate",
     "seed": "tsx prisma/seed.ts"
     
   },
