@@ -106,7 +106,7 @@ export function ProductDetailsSection({
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           <FormField
             control={form.control}
             name="model"
@@ -134,6 +134,24 @@ export function ProductDetailsSection({
                 <FormControl>
                   <Input
                     placeholder="Internal SKU (optional)"
+                    {...field}
+                    value={field.value || ""}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="barcode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Barcode</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="UPC, EAN, or custom barcode"
                     {...field}
                     value={field.value || ""}
                   />
