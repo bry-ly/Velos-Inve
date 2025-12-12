@@ -27,6 +27,11 @@ export const ProductFormSchema = z.object({
 
   sku: z.string().max(100, "SKU must be 100 characters or fewer").optional(),
 
+  barcode: z
+    .string()
+    .max(100, "Barcode must be 100 characters or fewer")
+    .optional(),
+
   categoryId: z.string().optional(),
 
   manufacturer: z
@@ -109,6 +114,11 @@ export const ProductSchema = z.object({
   sku: emptyStringToUndefined.refine(
     (val) => !val || val.length <= 100,
     "SKU must be 100 characters or fewer"
+  ),
+
+  barcode: emptyStringToUndefined.refine(
+    (val) => !val || val.length <= 100,
+    "Barcode must be 100 characters or fewer"
   ),
 
   categoryId: z
