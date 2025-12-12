@@ -53,6 +53,7 @@ export function ProductForm({
       manufacturer: "",
       model: "",
       sku: "",
+      barcode: "",
       quantity: 0,
       lowStockAt: undefined,
       condition: "new",
