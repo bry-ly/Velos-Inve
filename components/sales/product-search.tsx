@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { IconSearch, IconPlus } from "@tabler/icons-react";
+import { IconSearch, IconPlus, IconScan } from "@tabler/icons-react";
 import type { Product } from "@/lib/types";
 import { useDebounce } from "@/hooks/use-debounce";
+import { BarcodeScanner } from "@/components/barcode";
+import { toast } from "sonner";
 
 interface ProductSearchProps {
   onAddToCart: (product: Product) => void;
@@ -23,6 +25,7 @@ export function ProductSearch({
   error,
 }: ProductSearchProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [showScanner, setShowScanner] = useState(false);
   const debouncedSearch = useDebounce(searchTerm, 300);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
@@ -42,6 +45,7 @@ export function ProductSearch({
           (p) =>
             p.name.toLowerCase().includes(lower) ||
             (p.sku && p.sku.toLowerCase().includes(lower)) ||
+            (p.barcode && p.barcode.toLowerCase().includes(lower)) ||
             (p.manufacturer && p.manufacturer.toLowerCase().includes(lower))
         )
         .slice(0, 5); // Limit results
@@ -50,18 +54,56 @@ export function ProductSearch({
     });
   }, [debouncedSearch, products]);
 
+  const handleBarcodeScan = useCallback(
+    (barcode: string) => {
+      // Find product by barcode
+      const product = products.find(
+        (p) => p.barcode?.toLowerCase() === barcode.toLowerCase()
+      );
+
+      if (product) {
+        onAddToCart(product);
+        toast.success(`Added "${product.name}" to cart`);
+        setShowScanner(false);
+      } else {
+        // Try to search by the scanned value
+        setSearchTerm(barcode);
+        toast.warning(`No product found with barcode: ${barcode}`);
+      }
+    },
+    [products, onAddToCart]
+  );
+
   return (
     <div className="space-y-4">
-      <div className="relative">
-        <IconSearch className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search products by name, SKU, or manufacturer..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-8"
-          disabled={isLoading}
-        />
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <IconSearch className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search products by name, SKU, barcode, or manufacturer..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-8"
+            disabled={isLoading}
+          />
+        </div>
+        <Button
+          variant={showScanner ? "destructive" : "outline"}
+          size="icon"
+          onClick={() => setShowScanner(!showScanner)}
+          title={showScanner ? "Close scanner" : "Scan barcode"}
+        >
+          <IconScan className="h-4 w-4" />
+        </Button>
       </div>
+
+      {/* Barcode Scanner */}
+      {showScanner && (
+        <BarcodeScanner
+          onScan={handleBarcodeScan}
+          placeholder="Or enter barcode manually..."
+        />
+      )}
 
       {/* Loading State */}
       {isLoading && (
@@ -94,6 +136,7 @@ export function ProductSearch({
                   <span className="font-medium">{product.name}</span>
                   <div className="flex gap-2 text-xs text-muted-foreground">
                     <span>SKU: {product.sku || "N/A"}</span>
+                    {product.barcode && <span>• {product.barcode}</span>}
                     <span>Stock: {product.quantity}</span>
                   </div>
                 </div>
