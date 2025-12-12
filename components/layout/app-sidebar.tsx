@@ -86,6 +86,10 @@ const data = {
           title: "Stock History",
           url: "/stock/history",
         },
+        {
+          title: "Reorder Automation",
+          url: "/stock/reorder",
+        },
       ],
     },
     {
