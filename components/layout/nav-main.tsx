@@ -141,8 +141,8 @@ export function NavMain({
             // standard behavior for collapsed sidebar with submenus is to show a popover
             // BUT the user specifically requested: "when i click the icon it go to the pages"
             // So we override the collapsible behavior when collapsed.
-            const { state } = useSidebar();
-            const isCollapsed = state === "collapsed";
+            const { state, isMobile } = useSidebar();
+            const isCollapsed = state === "collapsed" && !isMobile;
 
             if (!item.items || item.items.length === 0 || isCollapsed) {
               return (
