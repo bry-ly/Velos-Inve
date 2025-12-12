@@ -10,6 +10,7 @@ import Link from "next/link";
 import { IconArrowLeft, IconAlertCircle } from "@tabler/icons-react";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { BarcodeGenerator } from "@/components/barcode";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -213,6 +214,17 @@ export default async function ProductPage(props: PageProps) {
               </CardContent>
             </Card>
           </div>
+
+          {/* Barcode Section */}
+          {product.barcode && (
+            <div className="max-w-md">
+              <BarcodeGenerator
+                value={product.barcode}
+                productName={product.name}
+                sku={product.sku ?? undefined}
+              />
+            </div>
+          )}
         </div>
       </main>
     </>
