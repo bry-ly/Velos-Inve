@@ -125,18 +125,21 @@ export function StockMovementDataTable({
   const currentEndDate = searchParams.get("endDate") || "";
   const currentReference = searchParams.get("reference") || "";
 
-  const [productId, setProductId] = React.useState(currentProductId);
-  const [locationId, setLocationId] = React.useState(currentLocationId);
-  const [type, setType] = React.useState(currentType);
+  const [productId, setProductId] = React.useState(currentProductId || "all");
+  const [locationId, setLocationId] = React.useState(
+    currentLocationId || "all"
+  );
+  const [type, setType] = React.useState(currentType || "all");
   const [startDate, setStartDate] = React.useState(currentStartDate);
   const [endDate, setEndDate] = React.useState(currentEndDate);
   const [reference, setReference] = React.useState(currentReference);
 
   const applyFilters = () => {
     const params = new URLSearchParams();
-    if (productId) params.set("productId", productId);
-    if (locationId) params.set("locationId", locationId);
-    if (type) params.set("type", type);
+    if (productId && productId !== "all") params.set("productId", productId);
+    if (locationId && locationId !== "all")
+      params.set("locationId", locationId);
+    if (type && type !== "all") params.set("type", type);
     if (startDate) params.set("startDate", startDate);
     if (endDate) params.set("endDate", endDate);
     if (reference) params.set("reference", reference);
@@ -145,9 +148,9 @@ export function StockMovementDataTable({
   };
 
   const clearFilters = () => {
-    setProductId("");
-    setLocationId("");
-    setType("");
+    setProductId("all");
+    setLocationId("all");
+    setType("all");
     setStartDate("");
     setEndDate("");
     setReference("");
@@ -155,7 +158,12 @@ export function StockMovementDataTable({
   };
 
   const hasFilters =
-    productId || locationId || type || startDate || endDate || reference;
+    (productId && productId !== "all") ||
+    (locationId && locationId !== "all") ||
+    (type && type !== "all") ||
+    startDate ||
+    endDate ||
+    reference;
 
   const exportToCsv = () => {
     const headers = [
@@ -278,7 +286,7 @@ export function StockMovementDataTable({
                 <SelectValue placeholder="All Products" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Products</SelectItem>
+                <SelectItem value="all">All Products</SelectItem>
                 {products.map((p) => (
                   <SelectItem key={p.id} value={p.id}>
                     {p.name}
@@ -292,7 +300,7 @@ export function StockMovementDataTable({
                 <SelectValue placeholder="All Locations" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Locations</SelectItem>
+                <SelectItem value="all">All Locations</SelectItem>
                 {locations.map((l) => (
                   <SelectItem key={l.id} value={l.id}>
                     {l.name}
@@ -306,7 +314,7 @@ export function StockMovementDataTable({
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="in">In</SelectItem>
                 <SelectItem value="out">Out</SelectItem>
                 <SelectItem value="receive">Receive</SelectItem>
