@@ -7,6 +7,7 @@ export interface Product {
   id: string;
   name: string;
   sku?: string | null;
+  barcode?: string | null;
   categoryId?: string | null;
   categoryName?: string | null;
   manufacturer?: string | null;
@@ -44,6 +45,7 @@ export interface ProductFormData {
   manufacturer: string;
   model: string;
   sku: string;
+  barcode: string;
   quantity: string;
   lowStockAt: string;
   condition: string;
