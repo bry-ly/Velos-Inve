@@ -47,7 +47,7 @@ export default async function NewLocationPage() {
             </div>
           </div>
 
-          <div className="max-w-2xl">
+          <div className="max-w-2xl mx-auto">
             <LocationForm />
           </div>
         </div>
