@@ -7,8 +7,9 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate && npm install --legacy-peer-deps",
     "seed": "tsx prisma/seed.ts"
+    
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.921.0",
