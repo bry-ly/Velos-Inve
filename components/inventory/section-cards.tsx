@@ -26,7 +26,10 @@ export function SectionCards({
   recentProducts?: number;
 }) {
   return (
-    <div className="grid grid-cols-1 gap-4 px-4 lg:px-2 md:grid-cols-2 lg:grid-cols-4">
+    <div
+      data-tour="stats-cards"
+      className="grid grid-cols-1 gap-4 px-4 lg:px-2 md:grid-cols-2 lg:grid-cols-4"
+    >
       <Card>
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between">
