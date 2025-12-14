@@ -89,7 +89,7 @@ export function SignupForm({
           description: "Please sign in to continue.",
         });
         form.reset();
-        router.push("/sign-in");
+        router.push("/auth/sign-in");
       }
     } catch (err) {
       toast.error("Sign up failed", {
