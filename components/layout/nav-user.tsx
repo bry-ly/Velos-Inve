@@ -74,7 +74,7 @@ export function NavUser({
   };
 
   return (
-    <SidebarMenu>
+    <SidebarMenu data-tour="user-menu">
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
