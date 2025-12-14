@@ -11,6 +11,11 @@ datasource db {
 // AUTHENTICATION MODELS
 // =====================
 
+enum UserRole {
+  user
+  admin
+}
+
 model User {
   id            String   @id
   name          String
@@ -19,6 +24,8 @@ model User {
   image         String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now()) @updatedAt
+  role          UserRole @default(user)
+  isDisabled    Boolean  @default(false) // Soft delete flag
 
   // Auth relations
   accounts Account[]
@@ -41,8 +48,28 @@ model User {
   batches        Batch[]
   purchaseOrders PurchaseOrder[]
   reorderRules   ReorderRule[]
+  company        Company?
 
   @@map("user")
+}
+
+model Company {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  name                String
+  email               String?
+  website             String?
+  currency            String   @default("USD")
+  logo                String? // Company logo URL (ImageKit)
+  industry            String? // Business type/industry
+  teamSize            String? // Team size category
+  onboardingCompleted Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("company")
 }
 
 model Session {
