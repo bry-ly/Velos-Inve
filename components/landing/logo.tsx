@@ -13,9 +13,7 @@ export const Logo = ({ className }: { className?: string }) => {
           className="h-8 w-8"
         />
       </div>
-      <span className="text-xl font-bold text-foreground">
-        Velos
-      </span>
+      <span className="text-xl font-bold">Velos</span>
     </div>
   );
 };
