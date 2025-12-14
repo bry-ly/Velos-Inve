@@ -168,7 +168,10 @@ export default async function DashboardPage(props: PageProps) {
                 dateRange={(searchParams.dateRange as string) || "90d"}
               />
             </div>
-            <div className="rounded-lg border bg-card p-6 shadow-sm">
+            <div
+              data-tour="quick-stats"
+              className="rounded-lg border bg-card p-6 shadow-sm"
+            >
               <h3 className="text-lg font-semibold mb-4">Quick Stats</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center pb-4 border-b">
