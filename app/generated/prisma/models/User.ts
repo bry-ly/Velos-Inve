@@ -32,6 +32,8 @@ export type UserMinAggregateOutputType = {
   image: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  role: $Enums.UserRole | null
+  isDisabled: boolean | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -42,6 +44,8 @@ export type UserMaxAggregateOutputType = {
   image: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  role: $Enums.UserRole | null
+  isDisabled: boolean | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -52,6 +56,8 @@ export type UserCountAggregateOutputType = {
   image: number
   createdAt: number
   updatedAt: number
+  role: number
+  isDisabled: number
   _all: number
 }
 
@@ -64,6 +70,8 @@ export type UserMinAggregateInputType = {
   image?: true
   createdAt?: true
   updatedAt?: true
+  role?: true
+  isDisabled?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -74,6 +82,8 @@ export type UserMaxAggregateInputType = {
   image?: true
   createdAt?: true
   updatedAt?: true
+  role?: true
+  isDisabled?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -84,6 +94,8 @@ export type UserCountAggregateInputType = {
   image?: true
   createdAt?: true
   updatedAt?: true
+  role?: true
+  isDisabled?: true
   _all?: true
 }
 
@@ -167,6 +179,8 @@ export type UserGroupByOutputType = {
   image: string | null
   createdAt: Date
   updatedAt: Date
+  role: $Enums.UserRole
+  isDisabled: boolean
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -198,6 +212,8 @@ export type UserWhereInput = {
   image?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
+  isDisabled?: Prisma.BoolFilter<"User"> | boolean
   accounts?: Prisma.AccountListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   actedActivity?: Prisma.ActivityLogListRelationFilter
@@ -212,6 +228,7 @@ export type UserWhereInput = {
   batches?: Prisma.BatchListRelationFilter
   purchaseOrders?: Prisma.PurchaseOrderListRelationFilter
   reorderRules?: Prisma.ReorderRuleListRelationFilter
+  company?: Prisma.XOR<Prisma.CompanyNullableScalarRelationFilter, Prisma.CompanyWhereInput> | null
 }
 
 export type UserOrderByWithRelationInput = {
@@ -222,6 +239,8 @@ export type UserOrderByWithRelationInput = {
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  isDisabled?: Prisma.SortOrder
   accounts?: Prisma.AccountOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   actedActivity?: Prisma.ActivityLogOrderByRelationAggregateInput
@@ -236,6 +255,7 @@ export type UserOrderByWithRelationInput = {
   batches?: Prisma.BatchOrderByRelationAggregateInput
   purchaseOrders?: Prisma.PurchaseOrderOrderByRelationAggregateInput
   reorderRules?: Prisma.ReorderRuleOrderByRelationAggregateInput
+  company?: Prisma.CompanyOrderByWithRelationInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -249,6 +269,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   image?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
+  isDisabled?: Prisma.BoolFilter<"User"> | boolean
   accounts?: Prisma.AccountListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   actedActivity?: Prisma.ActivityLogListRelationFilter
@@ -263,6 +285,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   batches?: Prisma.BatchListRelationFilter
   purchaseOrders?: Prisma.PurchaseOrderListRelationFilter
   reorderRules?: Prisma.ReorderRuleListRelationFilter
+  company?: Prisma.XOR<Prisma.CompanyNullableScalarRelationFilter, Prisma.CompanyWhereInput> | null
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -273,6 +296,8 @@ export type UserOrderByWithAggregationInput = {
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  isDisabled?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -289,6 +314,8 @@ export type UserScalarWhereWithAggregatesInput = {
   image?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
+  isDisabled?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
 }
 
 export type UserCreateInput = {
@@ -299,6 +326,8 @@ export type UserCreateInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
@@ -313,6 +342,7 @@ export type UserCreateInput = {
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -323,6 +353,8 @@ export type UserUncheckedCreateInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
@@ -337,6 +369,7 @@ export type UserUncheckedCreateInput = {
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -347,6 +380,8 @@ export type UserUpdateInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
@@ -361,6 +396,7 @@ export type UserUpdateInput = {
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -371,6 +407,8 @@ export type UserUncheckedUpdateInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
@@ -385,6 +423,7 @@ export type UserUncheckedUpdateInput = {
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -395,6 +434,8 @@ export type UserCreateManyInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
 }
 
 export type UserUpdateManyMutationInput = {
@@ -405,6 +446,8 @@ export type UserUpdateManyMutationInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -415,6 +458,8 @@ export type UserUncheckedUpdateManyInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -425,6 +470,8 @@ export type UserCountOrderByAggregateInput = {
   image?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  isDisabled?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -435,6 +482,8 @@ export type UserMaxOrderByAggregateInput = {
   image?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  isDisabled?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -445,6 +494,8 @@ export type UserMinOrderByAggregateInput = {
   image?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  role?: Prisma.SortOrder
+  isDisabled?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -471,6 +522,24 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type EnumUserRoleFieldUpdateOperationsInput = {
+  set?: $Enums.UserRole
+}
+
+export type UserCreateNestedOneWithoutCompanyInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCompanyInput, Prisma.UserUncheckedCreateWithoutCompanyInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCompanyInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCompanyNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCompanyInput, Prisma.UserUncheckedCreateWithoutCompanyInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCompanyInput
+  upsert?: Prisma.UserUpsertWithoutCompanyInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCompanyInput, Prisma.UserUpdateWithoutCompanyInput>, Prisma.UserUncheckedUpdateWithoutCompanyInput>
 }
 
 export type UserCreateNestedOneWithoutSessionsInput = {
@@ -671,7 +740,7 @@ export type UserUpdateOneRequiredWithoutOwnedActivityNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOwnedActivityInput, Prisma.UserUpdateWithoutOwnedActivityInput>, Prisma.UserUncheckedUpdateWithoutOwnedActivityInput>
 }
 
-export type UserCreateWithoutSessionsInput = {
+export type UserCreateWithoutCompanyInput = {
   id: string
   name: string
   email: string
@@ -679,7 +748,10 @@ export type UserCreateWithoutSessionsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
   ownedActivity?: Prisma.ActivityLogCreateNestedManyWithoutOwnerInput
   categories?: Prisma.CategoryCreateNestedManyWithoutUserInput
@@ -694,6 +766,126 @@ export type UserCreateWithoutSessionsInput = {
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
 }
 
+export type UserUncheckedCreateWithoutCompanyInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
+  ownedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOwnerInput
+  categories?: Prisma.CategoryUncheckedCreateNestedManyWithoutUserInput
+  tags?: Prisma.TagUncheckedCreateNestedManyWithoutUserInput
+  sales?: Prisma.SaleUncheckedCreateNestedManyWithoutUserInput
+  suppliers?: Prisma.SupplierUncheckedCreateNestedManyWithoutUserInput
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutUserInput
+  locations?: Prisma.LocationUncheckedCreateNestedManyWithoutUserInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutUserInput
+  batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
+  purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
+  reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCompanyInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCompanyInput, Prisma.UserUncheckedCreateWithoutCompanyInput>
+}
+
+export type UserUpsertWithoutCompanyInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCompanyInput, Prisma.UserUncheckedUpdateWithoutCompanyInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCompanyInput, Prisma.UserUncheckedCreateWithoutCompanyInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCompanyInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCompanyInput, Prisma.UserUncheckedUpdateWithoutCompanyInput>
+}
+
+export type UserUpdateWithoutCompanyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
+  ownedActivity?: Prisma.ActivityLogUpdateManyWithoutOwnerNestedInput
+  categories?: Prisma.CategoryUpdateManyWithoutUserNestedInput
+  tags?: Prisma.TagUpdateManyWithoutUserNestedInput
+  sales?: Prisma.SaleUpdateManyWithoutUserNestedInput
+  suppliers?: Prisma.SupplierUpdateManyWithoutUserNestedInput
+  customers?: Prisma.CustomerUpdateManyWithoutUserNestedInput
+  locations?: Prisma.LocationUpdateManyWithoutUserNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutUserNestedInput
+  batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
+  purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
+  reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCompanyInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
+  ownedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutOwnerNestedInput
+  categories?: Prisma.CategoryUncheckedUpdateManyWithoutUserNestedInput
+  tags?: Prisma.TagUncheckedUpdateManyWithoutUserNestedInput
+  sales?: Prisma.SaleUncheckedUpdateManyWithoutUserNestedInput
+  suppliers?: Prisma.SupplierUncheckedUpdateManyWithoutUserNestedInput
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutUserNestedInput
+  locations?: Prisma.LocationUncheckedUpdateManyWithoutUserNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutUserNestedInput
+  batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
+  purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
+  reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSessionsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
+  ownedActivity?: Prisma.ActivityLogCreateNestedManyWithoutOwnerInput
+  categories?: Prisma.CategoryCreateNestedManyWithoutUserInput
+  tags?: Prisma.TagCreateNestedManyWithoutUserInput
+  sales?: Prisma.SaleCreateNestedManyWithoutUserInput
+  suppliers?: Prisma.SupplierCreateNestedManyWithoutUserInput
+  customers?: Prisma.CustomerCreateNestedManyWithoutUserInput
+  locations?: Prisma.LocationCreateNestedManyWithoutUserInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutUserInput
+  batches?: Prisma.BatchCreateNestedManyWithoutUserInput
+  purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
+  reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
+}
+
 export type UserUncheckedCreateWithoutSessionsInput = {
   id: string
   name: string
@@ -702,6 +894,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
   ownedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOwnerInput
@@ -715,6 +909,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -741,6 +936,8 @@ export type UserUpdateWithoutSessionsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
   ownedActivity?: Prisma.ActivityLogUpdateManyWithoutOwnerNestedInput
@@ -754,6 +951,7 @@ export type UserUpdateWithoutSessionsInput = {
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -764,6 +962,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
   ownedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutOwnerNestedInput
@@ -777,6 +977,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -787,6 +988,8 @@ export type UserCreateWithoutAccountsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
   ownedActivity?: Prisma.ActivityLogCreateNestedManyWithoutOwnerInput
@@ -800,6 +1003,7 @@ export type UserCreateWithoutAccountsInput = {
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -810,6 +1014,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
   ownedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOwnerInput
@@ -823,6 +1029,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -849,6 +1056,8 @@ export type UserUpdateWithoutAccountsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
   ownedActivity?: Prisma.ActivityLogUpdateManyWithoutOwnerNestedInput
@@ -862,6 +1071,7 @@ export type UserUpdateWithoutAccountsInput = {
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -872,6 +1082,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
   ownedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutOwnerNestedInput
@@ -885,6 +1097,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSuppliersInput = {
@@ -895,6 +1108,8 @@ export type UserCreateWithoutSuppliersInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
@@ -908,6 +1123,7 @@ export type UserCreateWithoutSuppliersInput = {
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSuppliersInput = {
@@ -918,6 +1134,8 @@ export type UserUncheckedCreateWithoutSuppliersInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
@@ -931,6 +1149,7 @@ export type UserUncheckedCreateWithoutSuppliersInput = {
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSuppliersInput = {
@@ -957,6 +1176,8 @@ export type UserUpdateWithoutSuppliersInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
@@ -970,6 +1191,7 @@ export type UserUpdateWithoutSuppliersInput = {
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSuppliersInput = {
@@ -980,6 +1202,8 @@ export type UserUncheckedUpdateWithoutSuppliersInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
@@ -993,6 +1217,7 @@ export type UserUncheckedUpdateWithoutSuppliersInput = {
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCustomersInput = {
@@ -1003,6 +1228,8 @@ export type UserCreateWithoutCustomersInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
@@ -1016,6 +1243,7 @@ export type UserCreateWithoutCustomersInput = {
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCustomersInput = {
@@ -1026,6 +1254,8 @@ export type UserUncheckedCreateWithoutCustomersInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
@@ -1039,6 +1269,7 @@ export type UserUncheckedCreateWithoutCustomersInput = {
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCustomersInput = {
@@ -1065,6 +1296,8 @@ export type UserUpdateWithoutCustomersInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
@@ -1078,6 +1311,7 @@ export type UserUpdateWithoutCustomersInput = {
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCustomersInput = {
@@ -1088,6 +1322,8 @@ export type UserUncheckedUpdateWithoutCustomersInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1101,6 +1337,7 @@ export type UserUncheckedUpdateWithoutCustomersInput = {
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLocationsInput = {
@@ -1111,6 +1348,8 @@ export type UserCreateWithoutLocationsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
@@ -1124,6 +1363,7 @@ export type UserCreateWithoutLocationsInput = {
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLocationsInput = {
@@ -1134,6 +1374,8 @@ export type UserUncheckedCreateWithoutLocationsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
@@ -1147,6 +1389,7 @@ export type UserUncheckedCreateWithoutLocationsInput = {
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLocationsInput = {
@@ -1173,6 +1416,8 @@ export type UserUpdateWithoutLocationsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
@@ -1186,6 +1431,7 @@ export type UserUpdateWithoutLocationsInput = {
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLocationsInput = {
@@ -1196,6 +1442,8 @@ export type UserUncheckedUpdateWithoutLocationsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1209,6 +1457,7 @@ export type UserUncheckedUpdateWithoutLocationsInput = {
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCategoriesInput = {
@@ -1219,6 +1468,8 @@ export type UserCreateWithoutCategoriesInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
@@ -1232,6 +1483,7 @@ export type UserCreateWithoutCategoriesInput = {
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCategoriesInput = {
@@ -1242,6 +1494,8 @@ export type UserUncheckedCreateWithoutCategoriesInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
@@ -1255,6 +1509,7 @@ export type UserUncheckedCreateWithoutCategoriesInput = {
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCategoriesInput = {
@@ -1281,6 +1536,8 @@ export type UserUpdateWithoutCategoriesInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
@@ -1294,6 +1551,7 @@ export type UserUpdateWithoutCategoriesInput = {
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCategoriesInput = {
@@ -1304,6 +1562,8 @@ export type UserUncheckedUpdateWithoutCategoriesInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1317,6 +1577,7 @@ export type UserUncheckedUpdateWithoutCategoriesInput = {
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTagsInput = {
@@ -1327,6 +1588,8 @@ export type UserCreateWithoutTagsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
@@ -1340,6 +1603,7 @@ export type UserCreateWithoutTagsInput = {
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTagsInput = {
@@ -1350,6 +1614,8 @@ export type UserUncheckedCreateWithoutTagsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
@@ -1363,6 +1629,7 @@ export type UserUncheckedCreateWithoutTagsInput = {
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTagsInput = {
@@ -1389,6 +1656,8 @@ export type UserUpdateWithoutTagsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
@@ -1402,6 +1671,7 @@ export type UserUpdateWithoutTagsInput = {
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTagsInput = {
@@ -1412,6 +1682,8 @@ export type UserUncheckedUpdateWithoutTagsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1425,6 +1697,7 @@ export type UserUncheckedUpdateWithoutTagsInput = {
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutStockMovementsInput = {
@@ -1435,6 +1708,8 @@ export type UserCreateWithoutStockMovementsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
@@ -1448,6 +1723,7 @@ export type UserCreateWithoutStockMovementsInput = {
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutStockMovementsInput = {
@@ -1458,6 +1734,8 @@ export type UserUncheckedCreateWithoutStockMovementsInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
@@ -1471,6 +1749,7 @@ export type UserUncheckedCreateWithoutStockMovementsInput = {
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutStockMovementsInput = {
@@ -1497,6 +1776,8 @@ export type UserUpdateWithoutStockMovementsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
@@ -1510,6 +1791,7 @@ export type UserUpdateWithoutStockMovementsInput = {
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutStockMovementsInput = {
@@ -1520,6 +1802,8 @@ export type UserUncheckedUpdateWithoutStockMovementsInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1533,6 +1817,7 @@ export type UserUncheckedUpdateWithoutStockMovementsInput = {
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBatchesInput = {
@@ -1543,6 +1828,8 @@ export type UserCreateWithoutBatchesInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
@@ -1556,6 +1843,7 @@ export type UserCreateWithoutBatchesInput = {
   stockMovements?: Prisma.StockMovementCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBatchesInput = {
@@ -1566,6 +1854,8 @@ export type UserUncheckedCreateWithoutBatchesInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
@@ -1579,6 +1869,7 @@ export type UserUncheckedCreateWithoutBatchesInput = {
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBatchesInput = {
@@ -1605,6 +1896,8 @@ export type UserUpdateWithoutBatchesInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
@@ -1618,6 +1911,7 @@ export type UserUpdateWithoutBatchesInput = {
   stockMovements?: Prisma.StockMovementUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBatchesInput = {
@@ -1628,6 +1922,8 @@ export type UserUncheckedUpdateWithoutBatchesInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1641,6 +1937,7 @@ export type UserUncheckedUpdateWithoutBatchesInput = {
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPurchaseOrdersInput = {
@@ -1651,6 +1948,8 @@ export type UserCreateWithoutPurchaseOrdersInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
@@ -1664,6 +1963,7 @@ export type UserCreateWithoutPurchaseOrdersInput = {
   stockMovements?: Prisma.StockMovementCreateNestedManyWithoutUserInput
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPurchaseOrdersInput = {
@@ -1674,6 +1974,8 @@ export type UserUncheckedCreateWithoutPurchaseOrdersInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
@@ -1687,6 +1989,7 @@ export type UserUncheckedCreateWithoutPurchaseOrdersInput = {
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutUserInput
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPurchaseOrdersInput = {
@@ -1713,6 +2016,8 @@ export type UserUpdateWithoutPurchaseOrdersInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
@@ -1726,6 +2031,7 @@ export type UserUpdateWithoutPurchaseOrdersInput = {
   stockMovements?: Prisma.StockMovementUpdateManyWithoutUserNestedInput
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPurchaseOrdersInput = {
@@ -1736,6 +2042,8 @@ export type UserUncheckedUpdateWithoutPurchaseOrdersInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1749,6 +2057,7 @@ export type UserUncheckedUpdateWithoutPurchaseOrdersInput = {
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutUserNestedInput
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReorderRulesInput = {
@@ -1759,6 +2068,8 @@ export type UserCreateWithoutReorderRulesInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
@@ -1772,6 +2083,7 @@ export type UserCreateWithoutReorderRulesInput = {
   stockMovements?: Prisma.StockMovementCreateNestedManyWithoutUserInput
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReorderRulesInput = {
@@ -1782,6 +2094,8 @@ export type UserUncheckedCreateWithoutReorderRulesInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
@@ -1795,6 +2109,7 @@ export type UserUncheckedCreateWithoutReorderRulesInput = {
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutUserInput
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReorderRulesInput = {
@@ -1821,6 +2136,8 @@ export type UserUpdateWithoutReorderRulesInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
@@ -1834,6 +2151,7 @@ export type UserUpdateWithoutReorderRulesInput = {
   stockMovements?: Prisma.StockMovementUpdateManyWithoutUserNestedInput
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReorderRulesInput = {
@@ -1844,6 +2162,8 @@ export type UserUncheckedUpdateWithoutReorderRulesInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1857,6 +2177,7 @@ export type UserUncheckedUpdateWithoutReorderRulesInput = {
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutUserNestedInput
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSalesInput = {
@@ -1867,6 +2188,8 @@ export type UserCreateWithoutSalesInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
@@ -1880,6 +2203,7 @@ export type UserCreateWithoutSalesInput = {
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSalesInput = {
@@ -1890,6 +2214,8 @@ export type UserUncheckedCreateWithoutSalesInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
@@ -1903,6 +2229,7 @@ export type UserUncheckedCreateWithoutSalesInput = {
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSalesInput = {
@@ -1929,6 +2256,8 @@ export type UserUpdateWithoutSalesInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
@@ -1942,6 +2271,7 @@ export type UserUpdateWithoutSalesInput = {
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSalesInput = {
@@ -1952,6 +2282,8 @@ export type UserUncheckedUpdateWithoutSalesInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
@@ -1965,6 +2297,7 @@ export type UserUncheckedUpdateWithoutSalesInput = {
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutActedActivityInput = {
@@ -1975,6 +2308,8 @@ export type UserCreateWithoutActedActivityInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   ownedActivity?: Prisma.ActivityLogCreateNestedManyWithoutOwnerInput
@@ -1988,6 +2323,7 @@ export type UserCreateWithoutActedActivityInput = {
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutActedActivityInput = {
@@ -1998,6 +2334,8 @@ export type UserUncheckedCreateWithoutActedActivityInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   ownedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutOwnerInput
@@ -2011,6 +2349,7 @@ export type UserUncheckedCreateWithoutActedActivityInput = {
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutActedActivityInput = {
@@ -2026,6 +2365,8 @@ export type UserCreateWithoutOwnedActivityInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
@@ -2039,6 +2380,7 @@ export type UserCreateWithoutOwnedActivityInput = {
   batches?: Prisma.BatchCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOwnedActivityInput = {
@@ -2049,6 +2391,8 @@ export type UserUncheckedCreateWithoutOwnedActivityInput = {
   image?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  role?: $Enums.UserRole
+  isDisabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   actedActivity?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
@@ -2062,6 +2406,7 @@ export type UserUncheckedCreateWithoutOwnedActivityInput = {
   batches?: Prisma.BatchUncheckedCreateNestedManyWithoutUserInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutUserInput
   reorderRules?: Prisma.ReorderRuleUncheckedCreateNestedManyWithoutUserInput
+  company?: Prisma.CompanyUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOwnedActivityInput = {
@@ -2088,6 +2433,8 @@ export type UserUpdateWithoutActedActivityInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   ownedActivity?: Prisma.ActivityLogUpdateManyWithoutOwnerNestedInput
@@ -2101,6 +2448,7 @@ export type UserUpdateWithoutActedActivityInput = {
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutActedActivityInput = {
@@ -2111,6 +2459,8 @@ export type UserUncheckedUpdateWithoutActedActivityInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   ownedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutOwnerNestedInput
@@ -2124,6 +2474,7 @@ export type UserUncheckedUpdateWithoutActedActivityInput = {
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutOwnedActivityInput = {
@@ -2145,6 +2496,8 @@ export type UserUpdateWithoutOwnedActivityInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
@@ -2158,6 +2511,7 @@ export type UserUpdateWithoutOwnedActivityInput = {
   batches?: Prisma.BatchUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOwnedActivityInput = {
@@ -2168,6 +2522,8 @@ export type UserUncheckedUpdateWithoutOwnedActivityInput = {
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isDisabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   actedActivity?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
@@ -2181,6 +2537,7 @@ export type UserUncheckedUpdateWithoutOwnedActivityInput = {
   batches?: Prisma.BatchUncheckedUpdateManyWithoutUserNestedInput
   purchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutUserNestedInput
   reorderRules?: Prisma.ReorderRuleUncheckedUpdateManyWithoutUserNestedInput
+  company?: Prisma.CompanyUncheckedUpdateOneWithoutUserNestedInput
 }
 
 
@@ -2339,6 +2696,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   image?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  role?: boolean
+  isDisabled?: boolean
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   actedActivity?: boolean | Prisma.User$actedActivityArgs<ExtArgs>
@@ -2353,6 +2712,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   batches?: boolean | Prisma.User$batchesArgs<ExtArgs>
   purchaseOrders?: boolean | Prisma.User$purchaseOrdersArgs<ExtArgs>
   reorderRules?: boolean | Prisma.User$reorderRulesArgs<ExtArgs>
+  company?: boolean | Prisma.User$companyArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2364,6 +2724,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   image?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  role?: boolean
+  isDisabled?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2374,6 +2736,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   image?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  role?: boolean
+  isDisabled?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -2384,9 +2748,11 @@ export type UserSelectScalar = {
   image?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  role?: boolean
+  isDisabled?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "createdAt" | "updatedAt" | "role" | "isDisabled", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
@@ -2402,6 +2768,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   batches?: boolean | Prisma.User$batchesArgs<ExtArgs>
   purchaseOrders?: boolean | Prisma.User$purchaseOrdersArgs<ExtArgs>
   reorderRules?: boolean | Prisma.User$reorderRulesArgs<ExtArgs>
+  company?: boolean | Prisma.User$companyArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2424,6 +2791,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     batches: Prisma.$BatchPayload<ExtArgs>[]
     purchaseOrders: Prisma.$PurchaseOrderPayload<ExtArgs>[]
     reorderRules: Prisma.$ReorderRulePayload<ExtArgs>[]
+    company: Prisma.$CompanyPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2433,6 +2801,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     image: string | null
     createdAt: Date
     updatedAt: Date
+    role: $Enums.UserRole
+    isDisabled: boolean
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -2841,6 +3211,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   batches<T extends Prisma.User$batchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$batchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   purchaseOrders<T extends Prisma.User$purchaseOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$purchaseOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PurchaseOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reorderRules<T extends Prisma.User$reorderRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reorderRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReorderRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  company<T extends Prisma.User$companyArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$companyArgs<ExtArgs>>): Prisma.Prisma__CompanyClient<runtime.Types.Result.GetResult<Prisma.$CompanyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2877,6 +3248,8 @@ export interface UserFieldRefs {
   readonly image: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly role: Prisma.FieldRef<"User", 'UserRole'>
+  readonly isDisabled: Prisma.FieldRef<"User", 'Boolean'>
 }
     
 
@@ -3598,6 +3971,25 @@ export type User$reorderRulesArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ReorderRuleScalarFieldEnum | Prisma.ReorderRuleScalarFieldEnum[]
+}
+
+/**
+ * User.company
+ */
+export type User$companyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Company
+   */
+  select?: Prisma.CompanySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Company
+   */
+  omit?: Prisma.CompanyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CompanyInclude<ExtArgs> | null
+  where?: Prisma.CompanyWhereInput
 }
 
 /**
