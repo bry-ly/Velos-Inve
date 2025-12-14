@@ -103,7 +103,7 @@ export function ChartAreaInteractive({
   }, [timeRange, timeRangeOptions]);
 
   return (
-    <Card className="@container/card">
+    <Card data-tour="chart-area" className="@container/card">
       <CardHeader>
         <CardTitle>Inventory Value Trend</CardTitle>
         <CardDescription>
