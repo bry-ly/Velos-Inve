@@ -1,6 +1,7 @@
 /**
  * Shared utilities for server actions
  */
+import 'server-only'
 
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
@@ -8,13 +9,38 @@ import { z } from "zod";
 
 /**
  * Standard action result shape for consistency across all actions
+ * Uses discriminated union for better type safety
  */
-export type ActionResult<T = unknown> = {
-  success: boolean;
+export type ActionSuccess<T = unknown> = {
+  success: true;
   message: string;
-  errors?: Record<string, string[]>;
   data?: T;
+  errors?: never;
 };
+
+export type ActionFailure = {
+  success: false;
+  message: string;
+  errors: Record<string, string[]>;
+  data?: never;
+};
+
+/**
+ * Discriminated union type for action results
+ * Provides better type narrowing when checking success/failure
+ * 
+ * @example
+ * const result = await someAction()
+ * if (result.success) {
+ *   // TypeScript knows result is ActionSuccess here
+ *   console.log(result.message)
+ *   if (result.data) console.log(result.data)
+ * } else {
+ *   // TypeScript knows result.errors exists here
+ *   console.log(result.errors)
+ * }
+ */
+export type ActionResult<T = unknown> = ActionSuccess<T> | ActionFailure;
 
 /**
  * Require an authenticated user or throw an error
@@ -51,12 +77,11 @@ export function formatZodErrors(
 export function successResult<T = unknown>(
   message: string,
   data?: T
-): ActionResult<T> {
+): ActionSuccess<T> {
   return {
     success: true,
     message,
     data,
-    errors: {},
   };
 }
 
@@ -66,7 +91,7 @@ export function successResult<T = unknown>(
 export function failureResult(
   message: string,
   errors?: Record<string, string[]>
-): ActionResult {
+): ActionFailure {
   return {
     success: false,
     message,
