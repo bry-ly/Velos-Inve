@@ -20,6 +20,18 @@ const nextConfig: NextConfig = {
         hostname: 'my.spline.design',
       }
     ],
+    formats: ['image/avif', 'image/webp'],
+  },
+  experimental: {
+    optimizePackageImports: ['@tabler/icons-react', 'lucide-react', 'recharts', 'date-fns'],
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+  },
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
   },
 };
 
