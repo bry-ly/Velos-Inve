@@ -2,10 +2,10 @@
 
 <div align="center">
 
-![Next.js](https://img.shields.io/badge/Next.js-15.5.6-black?style=for-the-badge&logo=next.js&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-15.5.9-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![React](https://img.shields.io/badge/React-19.1.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-6.18.0-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-7.0.0-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=for-the-badge&logo=postgresql&logoColor=white)
 
@@ -56,7 +56,7 @@
 - 🔐 **Secure Authentication** - Built-in authentication using Better Auth with email/password + Google OAuth
 - 📊 **Real-time Dashboard** - Interactive charts and analytics for inventory insights with KPI cards
 - 🎨 **Modern UI/UX** - Beautiful, responsive interface built with Shadcn UI and Tailwind CSS v4
-- 🚀 **High Performance** - Optimized with Next.js 15 App Router and Turbopack for lightning-fast development
+- 🚀 **High Performance** - Optimized with Next.js 15 App Router, data caching layer, and Turbopack for lightning-fast development
 - 📱 **Fully Responsive** - Works seamlessly on desktop, tablet, and mobile devices
 - 🔍 **Advanced Filtering & Search** - Powerful search, filtering, and column visibility controls
 - 📈 **Analytics & Reports** - Comprehensive inventory analytics, category breakdowns, and stock movement tracking
@@ -67,6 +67,10 @@
 - 🔄 **Stock Management** - Real-time stock adjustments, transfers, and movement history
 - 🤝 **Supplier & Customer Management** - Track suppliers, customers, and purchase orders
 - ⚙️ **Reorder Automation** - Automated reorder rules with preferred suppliers and reorder points
+- 🏗️ **Clean Architecture** - Data Access Layer (DAL), caching layer, and barrel exports for maintainability
+- 🛡️ **Security First** - Comprehensive security headers, type-safe environment validation, and protected routes
+- ⚡ **Loading & Error States** - Skeleton loading states and error boundaries at all route levels
+- 🔒 **Type Safety** - Discriminated union types, Zod validation, and end-to-end TypeScript
 
 ---
 
@@ -189,6 +193,7 @@
 - **Prisma Type Generation** - Auto-generated types from schema
 - **Type-safe Forms** - React Hook Form with TypeScript
 - **API Type Safety** - Consistent request/response types
+- **Discriminated Union Types** - ActionSuccess and ActionFailure types for server actions
 
 #### Code Quality
 - **ESLint Configuration** - Strict linting rules
@@ -196,6 +201,24 @@
 - **Server Actions** - Next.js server actions for mutations
 - **Optimized Bundle Size** - Code splitting and lazy loading
 - **Error Handling** - Comprehensive error handling patterns
+- **JSDoc Documentation** - Inline documentation for custom hooks and utilities
+
+#### Architecture
+- **Data Access Layer (DAL)** - Clean abstraction layer for data fetching operations
+- **Data Caching Layer** - Tag-based cache invalidation with Next.js unstable_cache
+- **Barrel Exports** - Organized imports for hooks, actions, and validations
+- **Type-safe Environment** - Zod-validated environment variables with type-safe access
+
+#### User Experience
+- **Loading States** - Skeleton loading states for all dashboard routes
+- **Error Boundaries** - Multi-level error boundaries (dashboard, inventory, admin, global)
+- **Custom 404 Pages** - Beautiful not-found pages with navigation
+- **Animated Settings Modal** - Framer Motion-animated settings interface (modal-only)
+
+#### Security
+- **Security Headers** - X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, Referrer-Policy
+- **Environment Validation** - Type-safe access to required and optional environment variables
+- **Route Protection** - Middleware-based authentication with simplified route matching
 
 #### Developer Tools
 - **Next.js DevTools** - NextTopLoader for page transitions
@@ -212,7 +235,7 @@
 
 | Technology | Version | Purpose |
 | --- | --- | --- |
-| [Next.js](https://nextjs.org/) | 15.5.6 | React framework with App Router, server components, and optimizations |
+| [Next.js](https://nextjs.org/) | 15.5.9 | React framework with App Router, server components, and optimizations |
 | [React](https://react.dev/) | 19.1.0 | UI library with hooks and concurrent features |
 | [TypeScript](https://www.typescriptlang.org/) | 5.0+ | Type-safe development with strict mode |
 
@@ -220,7 +243,7 @@
 
 | Technology | Version | Purpose |
 | --- | --- | --- |
-| [Prisma](https://www.prisma.io/) | 6.18.0+ | ORM with migrations, type generation, and Prisma Studio |
+| [Prisma](https://www.prisma.io/) | 7.0.0+ | ORM with migrations, type generation, and Prisma Studio |
 | [PostgreSQL](https://www.postgresql.org/) | 16+ | Primary relational database |
 | [Better Auth](https://better-auth.vercel.app/) | 1.3.34+ | Modern authentication with sessions and OAuth |
 | [Prisma Accelerate](https://www.prisma.io/docs/data-platform/accelerate) | 3.0.1+ | Connection pooling and caching layer |
@@ -275,15 +298,27 @@ Velos-Inventory/
 │   ├── 📄 layout.tsx                    # Root layout with providers
 │   ├── 📄 page.tsx                      # Landing page
 │   ├── 📄 globals.css                   # Global styles and Tailwind config
+│   ├── 📄 loading.tsx                  # Root loading state
+│   ├── 📄 error.tsx                     # Root error boundary
+│   ├── 📄 not-found.tsx                 # Custom 404 page
+│   ├── 📄 global-error.tsx              # Global error boundary
 │   │
 │   ├── 📂 (auth)/                       # Authentication routes
 │   │   ├── 📂 sign-in/                  # Sign in page with form
 │   │   └── 📂 sign-up/                  # Sign up page with validation
 │   │
 │   ├── 📂 (dashboard)/                  # Protected dashboard routes
+│   │   ├── 📄 layout.tsx                # Dashboard layout with sidebar
+│   │   ├── 📄 error.tsx                 # Dashboard error boundary
 │   │   ├── 📂 dashboard/                # Main dashboard with KPI cards & charts
+│   │   │   ├── 📄 loading.tsx           # Dashboard loading skeleton
+│   │   │   └── 📄 page.tsx             # Dashboard page
 │   │   ├── 📂 inventory/                # Inventory management page
-│   │   ├── 📂 inventory/[id]/           # Product detail page
+│   │   │   ├── 📄 loading.tsx           # Inventory loading skeleton
+│   │   │   ├── 📄 error.tsx             # Inventory error boundary
+│   │   │   ├── 📄 page.tsx             # Inventory list
+│   │   │   ├── 📂 [id]/                # Product detail page
+│   │   │   │   └── 📄 loading.tsx       # Product detail loading
 │   │   ├── 📂 add-product/              # Add/edit product form
 │   │   ├── 📂 categories/               # Category management
 │   │   ├── 📂 tags/                     # Tag management
@@ -292,7 +327,6 @@ Velos-Inventory/
 │   │   ├── 📂 stock-alerts/             # Low stock alerts
 │   │   ├── 📂 stock-adjustments/        # Stock adjustment workflow
 │   │   ├── 📂 activity-log/             # Audit trail
-│   │   ├── 📂 settings/                 # User settings
 │   │   ├── 📂 suppliers/                # Supplier management
 │   │   ├── 📂 customers/                # Customer management
 │   │   ├── 📂 locations/                # Warehouse/location management
@@ -302,6 +336,8 @@ Velos-Inventory/
 │   │   └── 📂 onboarding/               # Initial setup wizard
 │   │
 │   ├── 📂 admin/                        # Admin-specific routes
+│   │   ├── 📄 loading.tsx               # Admin loading skeleton
+│   │   ├── 📄 error.tsx                 # Admin error boundary
 │   │   └── 📂 users/                    # User management (admin only)
 │   │
 │   ├── 📂 api/                          # API routes
@@ -357,6 +393,8 @@ Velos-Inventory/
 │   │   └── activity-filters.tsx         # Filter controls
 │   │
 │   ├── 📂 settings/                     # Settings components
+│   │   ├── settings-modal.tsx           # Animated settings modal (Framer Motion)
+│   │   ├── settings-dialog.tsx          # Radix UI dialog alternative
 │   │   ├── settings-tabs.tsx            # Settings navigation
 │   │   ├── profile-settings.tsx         # User profile
 │   │   ├── notification-settings.tsx    # Notification preferences
@@ -412,6 +450,7 @@ Velos-Inventory/
 ├── 📂 lib/                              # Utility & service libraries
 │   │
 │   ├── 📂 action/                       # Server actions (mutations)
+│   │   ├── index.ts                    # Barrel export for all actions
 │   │   ├── product.ts                   # Product CRUD operations
 │   │   ├── category.ts                  # Category management
 │   │   ├── tag.ts                       # Tag management
@@ -427,6 +466,18 @@ Velos-Inventory/
 │   │   ├── report.ts                    # Report generation
 │   │   └── user.ts                      # User operations
 │   │
+│   ├── 📂 cache/                        # Data caching layer
+│   │   ├── index.ts                    # Cache tags and revalidation constants
+│   │   ├── products.ts                  # Product caching helpers
+│   │   ├── categories.ts                # Category caching helpers
+│   │   └── analytics.ts                 # Analytics caching helpers
+│   │
+│   ├── 📂 data/                         # Data Access Layer (DAL)
+│   │   ├── index.ts                    # Barrel export for DAL
+│   │   ├── products.ts                  # Product data access functions
+│   │   ├── categories.ts                # Category data access functions
+│   │   └── analytics.ts                 # Analytics data access functions
+│   │
 │   ├── 📂 services/                     # Client-side service wrappers
 │   │   ├── product-service.ts           # Product operations with toast
 │   │   ├── category-service.ts          # Category operations with toast
@@ -441,6 +492,7 @@ Velos-Inventory/
 │   │   └── common.ts                    # Common utility types
 │   │
 │   ├── 📂 validations/                  # Zod validation schemas
+│   │   ├── index.ts                    # Barrel export for all schemas
 │   │   ├── product.ts                   # Product validation
 │   │   ├── sale.ts                      # Sale validation
 │   │   ├── auth.ts                      # Auth validation
@@ -464,22 +516,25 @@ Velos-Inventory/
 │   │   └── prisma.ts                    # Prisma client singleton
 │   │
 │   ├── 📂 server/                       # Server utilities
-│   │   ├── action-utils.ts              # Server action helpers
+│   │   ├── action-utils.ts              # Server action helpers (discriminated unions)
 │   │   ├── product-mapper.ts            # Form data parsing
 │   │   ├── product-helpers.ts           # Product transaction logic
 │   │   └── cache-helpers.ts             # Cache revalidation helpers
 │   │
+│   ├── 📄 env.ts                        # Type-safe environment validation (Zod)
 │   ├── 📄 utils.ts                      # Common utility functions (cn, etc.)
 │   └── 📄 hooks.ts                      # Custom hook exports
 │
 ├── 📂 hooks/                            # Custom React hooks
+│   ├── index.ts                       # Barrel export for all hooks
 │   ├── use-inventory-filters.ts         # Inventory filtering & URL sync
 │   ├── use-inventory-export.ts          # CSV/XLSX export functionality
 │   ├── use-product-form.ts              # Product form state management
 │   ├── use-image-upload.ts              # Image upload with preview
 │   ├── use-mobile.ts                    # Mobile detection
 │   ├── use-debounce.ts                  # Debounce hook
-│   └── use-search.ts                    # Debounced search hook
+│   ├── use-search.ts                    # Debounced search hook
+│   └── use-sidebar.ts                  # Sidebar state management (extracted)
 │
 ├── 📂 prisma/                           # Prisma configuration
 │   ├── 📄 schema.prisma                 # Database schema definition
@@ -605,11 +660,27 @@ The project uses Next.js 15 with Turbopack for faster development:
 ```typescript
 // Image optimization for multiple sources
 images: {
+  formats: ['image/avif', 'image/webp'],
   remotePatterns: [
     { hostname: 'ik.imagekit.io' },    // ImageKit CDN
     { hostname: 'lh3.googleusercontent.com' }, // Google avatars
     { hostname: 'github.com' }         // GitHub avatars
   ]
+}
+
+// Package optimization for bundle size
+experimental: {
+  optimizePackageImports: [
+    '@tabler/icons-react',
+    'lucide-react',
+    'recharts',
+    'date-fns'
+  ]
+}
+
+// Server actions configuration
+experimental_serverActions: {
+  bodySizeLimit: '2mb'
 }
 
 // Turbopack enabled for hot reloading
@@ -636,6 +707,215 @@ turbopack: { ... }
 - **Icon Library**: Lucide React
 - **Component Registries**: Multiple registries configured
 - **Color Scheme**: Automatically syncs with Tailwind theme
+
+### Middleware Configuration (`middleware.ts`)
+
+- **Route Protection** - Authentication guard for protected routes
+- **Simplified Matcher** - Negative lookahead regex for efficient route matching
+- **Security Headers**:
+  - `X-Frame-Options: DENY` - Prevent clickjacking
+  - `X-Content-Type-Options: nosniff` - Prevent MIME sniffing
+  - `X-XSS-Protection: 1; mode=block` - XSS protection
+  - `Referrer-Policy: strict-origin-when-cross-origin` - Referrer control
+
+```typescript
+// Security headers on all responses
+const response = NextResponse.next();
+response.headers.set('X-Frame-Options', 'DENY');
+response.headers.set('X-Content-Type-Options', 'nosniff');
+```
+
+---
+
+## 🏗️ Architecture
+
+### Data Access Layer (DAL)
+
+Clean abstraction layer for data fetching operations:
+
+```typescript
+// lib/data/products.ts
+import { unstable_cache } from 'next/cache';
+
+export async function getProducts(userId: string) {
+  return unstable_cache(
+    async () => prisma.product.findMany({
+      where: { userId },
+      include: { category: true }
+    }),
+    ['products', userId],
+    { revalidate: 3600, tags: [CACHE_TAGS.products] }
+  )();
+}
+```
+
+**Benefits:**
+- Separation of concerns
+- Centralized caching strategy
+- Type-safe data access
+- Easy to test and mock
+
+### Data Caching Layer
+
+Tag-based cache invalidation using Next.js `unstable_cache`:
+
+```typescript
+// lib/cache/index.ts
+export const CACHE_TAGS = {
+  products: 'products',
+  categories: 'categories',
+  analytics: 'analytics'
+} as const;
+
+export const CACHE_REVALIDATE = {
+  SHORT: 60,      // 1 minute
+  MEDIUM: 300,    // 5 minutes
+  LONG: 3600      // 1 hour
+} as const;
+```
+
+**Usage:**
+```typescript
+// Cache with tag-based revalidation
+const data = await unstable_cache(
+  () => fetchData(),
+  ['key'],
+  { revalidate: CACHE_REVALIDATE.MEDIUM, tags: [CACHE_TAGS.products] }
+)();
+
+// Revalidate on mutation
+revalidateTag(CACHE_TAGS.products);
+```
+
+### Barrel Exports
+
+Organized imports for cleaner code:
+
+```typescript
+// hooks/index.ts
+export * from './use-mobile';
+export * from './use-debounce';
+export * from './use-sidebar';
+
+// Usage: import { useMobile, useDebounce } from '@/hooks';
+```
+
+**Benefits:**
+- Single import point
+- Easier to discover exports
+- Cleaner import statements
+- Better IDE autocomplete
+
+### Type-safe Environment Variables
+
+Zod-validated environment configuration:
+
+```typescript
+// lib/env.ts
+import { z } from 'zod';
+
+const envSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  BETTER_AUTH_SECRET: z.string().min(32),
+  BETTER_AUTH_URL: z.string().url(),
+  // Optional
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  AWS_S3_BUCKET_NAME: z.string().optional()
+});
+
+export const env = envSchema.parse(process.env);
+```
+
+**Benefits:**
+- Compile-time type checking
+- Runtime validation
+- Early error detection
+- Clear required vs optional variables
+
+### Discriminated Union Types
+
+Type-safe server action results:
+
+```typescript
+// lib/server/action-utils.ts
+export type ActionSuccess<T> = {
+  success: true;
+  message: string;
+  data: T;
+};
+
+export type ActionFailure = {
+  success: false;
+  error: string;
+  details?: Record<string, string[]>;
+};
+
+export type ActionResult<T = void> =
+  | ActionSuccess<T>
+  | ActionFailure;
+
+// Usage
+if (result.success) {
+  // TypeScript knows `result.data` exists and `result.error` doesn't
+  console.log(result.data);
+} else {
+  // TypeScript knows `result.error` exists and `result.data` doesn't
+  console.error(result.error);
+}
+```
+
+### Loading States & Error Boundaries
+
+Comprehensive loading and error handling:
+
+**Loading States:**
+```typescript
+// app/(dashboard)/dashboard/loading.tsx
+export default function Loading() {
+  return (
+    <div className="space-y-6">
+      <Skeleton className="h-8 w-64" />
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <SkeletonCard />
+        <SkeletonCard />
+        <SkeletonCard />
+        <SkeletonCard />
+      </div>
+    </div>
+  );
+}
+```
+
+**Error Boundaries:**
+```typescript
+// app/(dashboard)/error.tsx
+'use client';
+
+export default function Error({
+  error,
+  reset
+}: {
+  error: Error;
+  reset: () => void;
+}) {
+  return (
+    <div className="flex h-screen items-center justify-center">
+      <Card>
+        <CardContent className="p-6">
+          <h2 className="text-lg font-semibold">Something went wrong</h2>
+          <p className="text-muted-foreground">{error.message}</p>
+          <Button onClick={reset}>Try again</Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+```
+
+**Hierarchy:**
+1. Global error boundary (`app/global-error.tsx`) - Fallback for all errors
+2. Route-level error boundaries (`app/*/error.tsx`) - Route-specific errors
+3. Custom 404 page (`app/not-found.tsx`) - Not found handling
 
 ---
 
@@ -1469,6 +1749,13 @@ export const auth = betterAuth({
 ```
 
 ### Settings & Preferences
+
+**Settings UI:**
+- Animated modal interface (Framer Motion)
+- Modal-only design - no separate settings pages
+- Radix UI dialog alternative available
+- Accessible from sidebar navigation
+- Smooth animations and transitions
 
 **User Profile:**
 - Name
