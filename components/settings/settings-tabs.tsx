@@ -14,6 +14,8 @@ import {
   IconHelp,
 } from "@tabler/icons-react";
 import { ComingSoon } from "@/components/coming-soon";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface SettingsTabsProps {
   user: {
@@ -30,92 +32,135 @@ interface SettingsTabsProps {
     userAgent: string | null | undefined;
   };
   defaultTab?: string;
+  isDialog?: boolean;
 }
 
 export function SettingsTabs({
   user,
   session,
   defaultTab = "profile",
+  isDialog = false,
 }: SettingsTabsProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const handleTabChange = (value: string) => {
+    // If inside a dialog, we might still want to update URL or just local state.
+    // For now, let's keep URL syncing as it's useful, but maybe use replace to avoid history stack pollution if needed.
     const params = new URLSearchParams(searchParams);
     params.set("tab", value);
     router.replace(`${pathname}?${params.toString()}`);
   };
 
-  // Helper to determine active tab
   const currentTab = searchParams.get("tab") || defaultTab;
 
-  return (
-    <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
-      <aside className="-mx-4 lg:w-1/5">
-        <nav className="flex space-x-2 lg:flex-col lg:space-x-0 lg:space-y-1">
-          <button
-            onClick={() => handleTabChange("profile")}
-            className={`flex items-center gap-2 justify-start rounded-md p-2 text-left text-sm font-medium hover:bg-accent hover:text-accent-foreground ${
-              currentTab === "profile"
-                ? "bg-muted hover:bg-muted"
-                : "transparent"
-            }`}
+  const content = (
+    <Tabs
+      defaultValue={currentTab}
+      onValueChange={handleTabChange}
+      className="flex flex-row h-full gap-2 min-h-0 overflow-hidden"
+    >
+      <div className="w-60 px-2 flex flex-col gap-5 shrink-0 mt-30">
+        <TabsList className="w-full px-2 flex flex-col gap-1 bg-transparent">
+          <TabsTrigger
+            value="profile"
+            className="w-full justify-start px-3 py-2 h-auto rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-primary/10 data-[state=active]:text-foreground data-[state=active]:shadow-none hover:bg-primary/5 transition-colors"
           >
-            <IconUser className="size-4" />
-            Profile
-          </button>
-          <button
-            onClick={() => handleTabChange("notifications")}
-            className={`flex items-center gap-2 justify-start rounded-md p-2 text-left text-sm font-medium hover:bg-accent hover:text-accent-foreground ${
-              currentTab === "notifications"
-                ? "bg-muted hover:bg-muted"
-                : "transparent"
-            }`}
+            <div className="flex items-center gap-3">
+              <IconUser className="size-4" />
+              <span>Profile</span>
+            </div>
+          </TabsTrigger>
+          <TabsTrigger
+            value="notifications"
+            className="w-full justify-start px-3 py-2 h-auto rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-primary/10 data-[state=active]:text-foreground data-[state=active]:shadow-none hover:bg-primary/5 transition-colors"
           >
-            <IconBell className="size-4" />
-            Notifications
-          </button>
-          <button
-            onClick={() => handleTabChange("security")}
-            className={`flex items-center gap-2 justify-start rounded-md p-2 text-left text-sm font-medium hover:bg-accent hover:text-accent-foreground ${
-              currentTab === "security"
-                ? "bg-muted hover:bg-muted"
-                : "transparent"
-            }`}
+            <div className="flex items-center gap-3">
+              <IconBell className="size-4" />
+              <span>Notifications</span>
+            </div>
+          </TabsTrigger>
+          <TabsTrigger
+            value="security"
+            className="w-full justify-start px-3 py-2 h-auto rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-primary/10 data-[state=active]:text-foreground data-[state=active]:shadow-none hover:bg-primary/5 transition-colors"
           >
-            <IconShield className="size-4" />
-            Security
-          </button>
-          <button
-            onClick={() => handleTabChange("preferences")}
-            className={`flex items-center gap-2 justify-start rounded-md p-2 text-left text-sm font-medium hover:bg-accent hover:text-accent-foreground ${
-              currentTab === "preferences"
-                ? "bg-muted hover:bg-muted"
-                : "transparent"
-            }`}
+            <div className="flex items-center gap-3">
+              <IconShield className="size-4" />
+              <span>Security</span>
+            </div>
+          </TabsTrigger>
+          <TabsTrigger
+            value="preferences"
+            className="w-full justify-start px-3 py-2 h-auto rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-primary/10 data-[state=active]:text-foreground data-[state=active]:shadow-none hover:bg-primary/5 transition-colors"
           >
-            <IconSettings className="size-4" />
-            Preferences
-          </button>
-          <button
-            onClick={() => handleTabChange("help")}
-            className={`flex items-center gap-2 justify-start rounded-md p-2 text-left text-sm font-medium hover:bg-accent hover:text-accent-foreground ${
-              currentTab === "help" ? "bg-muted hover:bg-muted" : "transparent"
-            }`}
+            <div className="flex items-center gap-3">
+              <IconSettings className="size-4" />
+              <span>Preferences</span>
+            </div>
+          </TabsTrigger>
+          <TabsTrigger
+            value="help"
+            className="w-full justify-start px-3 py-2 h-auto rounded-lg text-sm font-medium text-muted-foreground data-[state=active]:bg-primary/10 data-[state=active]:text-foreground data-[state=active]:shadow-none hover:bg-primary/5 transition-colors"
           >
-            <IconHelp className="size-4" />
-            Help Center
-          </button>
-        </nav>
-      </aside>
-      <div className="flex-1 lg:max-w-2xl">
-        {currentTab === "profile" && <ProfileSettings user={user} />}
-        {currentTab === "notifications" && <NotificationSettings />}
-        {currentTab === "security" && <SecuritySettings session={session} />}
-        {currentTab === "preferences" && <PreferencesSettings />}
-        {currentTab === "help" && <ComingSoon />}
+            <div className="flex items-center gap-3">
+              <IconHelp className="size-4" />
+              <span>Help Center</span>
+            </div>
+          </TabsTrigger>
+        </TabsList>
       </div>
+
+      <div className="flex-1 px-10 pt-8 bg-muted/10 rounded-xl flex flex-col gap-5 overflow-hidden relative min-h-0">
+        <div className="flex items-center justify-between shrink-0">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            {currentTab
+              ? currentTab.charAt(0).toUpperCase() + currentTab.slice(1)
+              : "Settings"}
+          </h2>
+        </div>
+        <div className="flex-1 overflow-y-auto min-h-0 pb-10">
+          <TabsContent value="profile" className="mt-0 space-y-6 p-5">
+            <ProfileSettings user={user} />
+          </TabsContent>
+          <TabsContent value="notifications" className="mt-0 space-y-6 p-10">
+            <NotificationSettings />
+          </TabsContent>
+          <TabsContent value="security" className="mt-0 space-y-6 p-10">
+            <SecuritySettings session={session} />
+          </TabsContent>
+          <TabsContent value="preferences" className="mt-0 space-y-6 p-10">
+            <PreferencesSettings />
+          </TabsContent>
+          <TabsContent value="help" className="mt-0 space-y-6 flex items-center justify-center max-h-svh">
+            <ComingSoon />
+          </TabsContent>
+        </div>
+      </div>
+    </Tabs>
+  );
+
+  if (isDialog) {
+    return (
+      <div className="h-full w-full flex flex-col overflow-hidden bg-background rounded-2xl">
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex justify-center p-4">
+      <Card className="w-full max-w-5xl overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm">
+        <div className="border-b bg-muted/30 px-8 py-6">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-semibold tracking-tight">Settings</h2>
+            <p className="text-sm text-muted-foreground">
+              Manage your account settings and preferences.
+            </p>
+          </div>
+        </div>
+        {content}
+      </Card>
     </div>
   );
 }

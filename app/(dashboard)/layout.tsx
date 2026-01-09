@@ -11,35 +11,30 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth.api.getSession({
+  // Session is guaranteed by middleware, but we need user data
+  // Using non-null assertion since middleware ensures session exists
+  const session = (await auth.api.getSession({
     headers: await headers(),
-  });
-
-  if (!session) {
-    redirect("auth/sign-in");
-  }
+  }))!;
 
   // Redirect admin users to admin dashboard
   if (session.user.role === "admin") {
     redirect("/admin");
   }
 
-  // Check for company
+  // Check for company - business logic, not auth
   const company = await prisma.company.findUnique({
     where: { userId: session.user.id },
   });
 
-  // If no company and NOT already on onboarding page (this layout is for dashboard),
-  // we redirect. However, we must ensure /onboarding does NOT use this layout if this layout is in app/(dashboard).
-  // If /onboarding is outside (dashboard) group, then this is fine.
-  // Assuming /onboarding is at app/onboarding/page.tsx, it is NOT in (dashboard) group.
+  // Redirect to onboarding if no company exists
   if (!company) {
     redirect("/onboarding");
   }
 
   const user = session.user;
   const userSidebar = {
-    name: company.name, // Use company name for the main display
+    name: company.name,
     email: user.email ?? "",
     avatar: company.logo || user.image || "/avatars/placeholder.svg",
   };
@@ -58,7 +53,22 @@ export default async function DashboardLayout({
           } as React.CSSProperties
         }
       >
-        <AppSidebar user={userSidebar} />
+        <AppSidebar
+          user={userSidebar}
+          userData={{
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image ?? null,
+          }}
+          sessionData={{
+            createdAt: session.session.createdAt,
+            updatedAt: session.session.updatedAt,
+            expiresAt: session.session.expiresAt,
+            ipAddress: session.session.ipAddress,
+            userAgent: session.session.userAgent,
+          }}
+        />
         <SidebarInset>{children}</SidebarInset>
       </SidebarProvider>
       <TourSpotlight />

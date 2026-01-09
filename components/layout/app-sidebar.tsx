@@ -1,5 +1,6 @@
 "use client";
-import type * as React from "react";
+import * as React from "react";
+import { SettingsModal } from "@/components/settings/settings-modal";
 import {
   IconDashboard,
   IconShoppingCart,
@@ -11,6 +12,7 @@ import {
   IconUsers,
   IconBuildingWarehouse,
 } from "@tabler/icons-react";
+import type { Icon } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/layout/nav-main";
 import { NavSecondary } from "@/components/layout/nav-secondary";
@@ -26,6 +28,16 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import Image from "next/image";
+
+/**
+ * Navigation item type for secondary nav with optional action
+ */
+type NavSecondaryItem = {
+  title: string;
+  url: string;
+  icon: Icon;
+  action?: string;
+};
 
 const data = {
   navMain: [
@@ -162,50 +174,93 @@ const data = {
   navSecondary: [
     {
       title: "Settings",
-      url: "/settings",
+      url: "#", // Changed to hash to prevent navigation
       icon: IconSettings,
+      action: "settings", // Custom action identifier
     },
   ],
 };
 
 interface AppSidebarProps {
   user: { name: string; email: string; avatar: string };
+  userData: {
+    id: string;
+    name: string | null;
+    email: string;
+    image: string | null;
+  };
+  sessionData: {
+    createdAt: Date;
+    updatedAt: Date;
+    expiresAt: Date;
+    ipAddress: string | null | undefined;
+    userAgent: string | null | undefined;
+  };
 }
 
 export function AppSidebar({
   user,
+  userData,
+  sessionData,
   ...props
 }: AppSidebarProps & React.ComponentProps<typeof Sidebar>) {
+  const [settingsOpen, setSettingsOpen] = React.useState(false);
+  const [triggerRect, setTriggerRect] = React.useState<DOMRect | null>(null);
+
+  // Intercept settings click
+  const handleItemClick = (e: React.MouseEvent, item: NavSecondaryItem) => {
+    if (item.action === "settings") {
+      e.preventDefault();
+      setTriggerRect(e.currentTarget.getBoundingClientRect());
+      setSettingsOpen(true);
+    }
+  };
+
   return (
-    <Sidebar collapsible="icon" data-tour="sidebar" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
-            >
-              <Link href="/dashboard" prefetch={true}>
-                <Image
-                  src="/icon.png"
-                  alt="Logo"
-                  width={20}
-                  height={20}
-                  className="size-5!"
-                />
-                <span className="text-base font-semibold">Dashboard</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={user} />
-      </SidebarFooter>
-    </Sidebar>
+    <>
+      <Sidebar collapsible="icon" data-tour="sidebar" {...props}>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                className="data-[slot=sidebar-menu-button]:p-1.5!"
+              >
+                <Link href="/dashboard" prefetch={true}>
+                  <Image
+                    src="/icon.png"
+                    alt="Logo"
+                    width={20}
+                    height={20}
+                    className="size-5!"
+                  />
+                  <span className="text-base font-semibold">Dashboard</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent>
+          <NavMain items={data.navMain} />
+          <NavSecondary
+            items={data.navSecondary.map((item) => ({
+              ...item,
+              onClick: (e: React.MouseEvent) => handleItemClick(e, item),
+            }))}
+            className="mt-auto"
+          />
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser user={user} />
+        </SidebarFooter>
+      </Sidebar>
+      <SettingsModal
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        triggerRect={triggerRect}
+        user={userData}
+        session={sessionData}
+      />
+    </>
   );
 }

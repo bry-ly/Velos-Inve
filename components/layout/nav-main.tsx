@@ -28,6 +28,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -144,7 +149,7 @@ export function NavMain({
             const { state, isMobile } = useSidebar();
             const isCollapsed = state === "collapsed" && !isMobile;
 
-            if (!item.items || item.items.length === 0 || isCollapsed) {
+            if (!item.items || item.items.length === 0) {
               return (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
@@ -161,6 +166,51 @@ export function NavMain({
                       <span className="truncate">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            }
+
+            if (isCollapsed) {
+              return (
+                <SidebarMenuItem key={item.title}>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <SidebarMenuButton
+                        tooltip={item.title}
+                        isActive={isActive}
+                      >
+                        {item.icon && <item.icon />}
+                        <span className="truncate">{item.title}</span>
+                      </SidebarMenuButton>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      side="right"
+                      align="start"
+                      sideOffset={0}
+                      className="w-56 p-2"
+                    >
+                      <div className="px-2 py-1.5 text-sm font-semibold text-foreground/70">
+                        {item.title}
+                      </div>
+                      <div className="grid gap-1">
+                        {item.items.map((subItem) => (
+                          <Link
+                            key={subItem.url}
+                            href={subItem.url}
+                            onClick={(e) => onLinkClick?.(e, subItem.url)}
+                            className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent hover:text-accent-foreground ${
+                              pathname === subItem.url
+                                ? "bg-accent text-accent-foreground font-medium"
+                                : "text-muted-foreground"
+                            }`}
+                          >
+                            <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground" />
+                            <span>{subItem.title}</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </SidebarMenuItem>
               );
             }
@@ -251,23 +301,21 @@ export function NavMain({
 
                   try {
                     const result = await createProduct(formData);
-                    if (result?.success) {
+                    if (result.success) {
                       toast.success(
                         result.message ?? "Product created successfully!"
                       );
                       handleOpenChange(false);
                       router.refresh();
-                    } else if (result?.errors) {
-                      const errorMessages = Object.values(result.errors)
-                        .flat()
-                        .join(", ");
-                      toast.error(result.message ?? "Validation failed", {
-                        description: errorMessages,
-                      });
                     } else {
-                      toast.error(
-                        result?.message ?? "Failed to create product."
-                      );
+                      // Failure case - errors always exist on ActionFailure
+                      const errorMessages = Object.entries(result.errors)
+                        .filter(([, msgs]) => msgs.length > 0)
+                        .map(([, msgs]) => msgs.join(", "))
+                        .join("; ");
+                      toast.error(result.message ?? "Validation failed", {
+                        description: errorMessages || undefined,
+                      });
                     }
                   } catch (error) {
                     toast.error("Failed to create product.", {

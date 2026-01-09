@@ -117,12 +117,6 @@ export function ProfileSettings({ user }: ProfileSettingsProps) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium">Profile</h3>
-        <p className="text-sm text-muted-foreground">
-          This is how others will see you on the site.
-        </p>
-      </div>
       <div className="space-y-8">
         <div className="space-y-2">
           <Label htmlFor="name">Username</Label>

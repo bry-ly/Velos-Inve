@@ -23,6 +23,7 @@ export function NavSecondary({
     title: string;
     url: string;
     icon: Icon;
+    onClick?: (e: React.MouseEvent) => void;
   }[];
   onLinkClick?: (e: React.MouseEvent<HTMLAnchorElement>, url: string) => void;
 } & React.ComponentProps<typeof SidebarGroup>) {
@@ -41,7 +42,12 @@ export function NavSecondary({
               >
                 <Link
                   href={item.url}
-                  onClick={(e) => props.onLinkClick?.(e, item.url)}
+                  onClick={(e) => {
+                    if (item.onClick) {
+                      item.onClick(e);
+                    }
+                    props.onLinkClick?.(e, item.url);
+                  }}
                 >
                   <item.icon />
                   <span>{item.title}</span>
